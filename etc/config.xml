@@ -1,0 +1,149 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <pensopay>
+                <active>0</active>
+                <title>Credit Card (PensoPay)</title>
+                <model>PensoPayFacade</model>
+                <position>0</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <is_gateway>1</is_gateway>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <testmode>0</testmode>
+                <pending_payment_order_cancel>0</pending_payment_order_cancel>
+                <autocapture>0</autocapture>
+                <transaction_fee>0</transaction_fee>
+                <transaction_fee_label>Transaction Fee</transaction_fee_label>
+                <sort_order>1</sort_order>
+                <payment_methods></payment_methods>
+                <checkout_method>redirect</checkout_method>
+                <privateInfoKeys></privateInfoKeys>
+                <paymentInfoKeys>cc_type,cc_number,exp_month,exp_year</paymentInfoKeys>
+                <cardlogos></cardlogos>
+                <cardlogos_size>25</cardlogos_size>
+                <new_order_status_before_payment>pending</new_order_status_before_payment>
+                <new_order_status>processing</new_order_status>
+            </pensopay>
+            <pensopay_viabill>
+                <active>0</active>
+                <title>ViaBill (PensoPay)</title>
+                <model>PensoPayViabillFacade</model>
+                <position>1</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <shop_id></shop_id>
+                <instructions>Pay with ViaBill</instructions>
+                <show_in_product>1</show_in_product>
+                <show_in_category>1</show_in_category>
+                <show_in_cart>1</show_in_cart>
+                <show_in_checkout>1</show_in_checkout>
+                <bundle_update_selector>.product-options-wrapper input, .product-options-wrapper select</bundle_update_selector>
+                <configurable_update_selector>.product-add-form div.product-options-wrapper</configurable_update_selector>
+                <catalog_update_selector>.product-item-details</catalog_update_selector>
+                <allowspecific>0</allowspecific>
+                <is_gateway>1</is_gateway>
+                <sort_order>2</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>40</cardlogo_size>
+            </pensopay_viabill>
+            <pensopay_expressbank>
+                <active>0</active>
+                <title>ExpressBank (PensoPay)</title>
+                <model>PensoPayExpressBankFacade</model>
+                <position>2</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <instructions>Pay with ExpressBank</instructions>
+                <is_gateway>1</is_gateway>
+                <sort_order>3</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>35</cardlogo_size>
+            </pensopay_expressbank>
+            <pensopay_paypal>
+                <active>0</active>
+                <title>PayPal (PensoPay)</title>
+                <model>PensoPayPayPalFacade</model>
+                <position>3</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <allowspecific>0</allowspecific>
+                <instructions>Pay with PayPal</instructions>
+                <is_gateway>1</is_gateway>
+                <sort_order>3</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>45</cardlogo_size>
+            </pensopay_paypal>
+            <pensopay_anyday>
+                <active>0</active>
+                <title>Anyday (PensoPay)</title>
+                <model>PensoPayAnydayFacade</model>
+                <position>4</position>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <shop_id></shop_id>
+                <instructions>Pay with Anyday</instructions>
+                <show_in_product>1</show_in_product>
+                <show_in_category>1</show_in_category>
+                <show_in_cart>1</show_in_cart>
+                <show_in_checkout>1</show_in_checkout>
+                <bundle_update_selector>.product-options-wrapper input, .product-options-wrapper select</bundle_update_selector>
+                <configurable_update_selector>.product-add-form div.product-options-wrapper</configurable_update_selector>
+                <catalog_update_selector>.product-item-details</catalog_update_selector>
+                <allowspecific>0</allowspecific>
+                <is_gateway>1</is_gateway>
+                <sort_order>2</sort_order>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>40</cardlogo_size>
+            </pensopay_anyday>
+        </payment>
+    </default>
+</config>

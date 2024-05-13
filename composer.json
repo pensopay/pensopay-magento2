@@ -1,0 +1,33 @@
+{
+  "name": "pensopay/magento2-gateway",
+  "description": "Implements integration with the PensoPay payment service provider.",
+  "authors": [
+    {
+      "name": "Rasmus Bech",
+      "email": "rb@pensopay.com"
+    },
+    {
+      "name": "Dimitris Preketes",
+      "email": "d.preketes@codecave.eu"
+    }
+  ],
+  "require": {
+    "php": ">=7.4",
+    "symfony/intl": "^5.0 || ^6.0",
+    "pensopay/php-pensopay": "*",
+    "ext-json": "*"
+  },
+  "type": "magento2-module",
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "PensoPay\\Payment\\": ""
+    }
+  }
+}

@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_payment_place_start">
+        <observer name="PensoPay_Gateway_Sales_Order_Payment_Place_Start" instance="PensoPay\Gateway\Observer\SalesOrderPaymentPlaceStart"/>
+    </event>
+    <event name="sales_order_place_after">
+        <observer name="PensoPay_Gateway_Sales_Order_Place_After" instance="PensoPay\Gateway\Observer\SalesOrderPlaceAfter"/>
+    </event>
+</config>

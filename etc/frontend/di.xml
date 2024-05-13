@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\Model\CompositeConfigProvider">
+        <arguments>
+            <argument name="configProviders" xsi:type="array">
+                <item name="pensopay_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\PensoPayConfigProvider</item>
+                <item name="pensopay_viabill_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\ViabillConfigProvider</item>
+                <item name="pensopay_expressbank_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\ExpressBankConfigProvider</item>
+                <item name="pensopay_paypal_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\PayPalConfigProvider</item>
+                <item name="pensopay_anyday_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\AnydayConfigProvider</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Viabill -->
+    <type name="Magento\Framework\Pricing\Render">
+        <plugin name="viabill-tag" type="PensoPay\Gateway\Plugin\Framework\Pricing\Render" />
+    </type>
+
+    <type name="Magento\Framework\App\Request\CsrfValidator">
+        <plugin name="pensopay-skipcsrf-translate" type="PensoPay\Gateway\Plugin\Framework\App\Request\CsrfValidator" />
+    </type>
+</config>
