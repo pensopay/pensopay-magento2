@@ -49,10 +49,8 @@ class ResponseCodeValidator extends AbstractValidator
         //Check that the transaction was accepted
         $responseObject = $response['object'];
         if (isset($responseObject)) {
-            if (isset($responseObject['accepted'])) {
-                if ($responseObject['accepted'] === true) {
-                    return true;
-                }
+            if (isset($responseObject['id'])) {
+                return true; //status 200 means we have an object
             }
         }
 

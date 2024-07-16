@@ -5,9 +5,11 @@
             <argument name="configProviders" xsi:type="array">
                 <item name="pensopay_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\PensoPayConfigProvider</item>
                 <item name="pensopay_viabill_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\ViabillConfigProvider</item>
-                <item name="pensopay_expressbank_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\ExpressBankConfigProvider</item>
-                <item name="pensopay_paypal_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\PayPalConfigProvider</item>
                 <item name="pensopay_anyday_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\AnydayConfigProvider</item>
+                <item name="pensopay_mobilepay_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\MobilePayConfigProvider</item>
+                <item name="pensopay_applepay_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\ApplePayConfigProvider</item>
+                <item name="pensopay_swish_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\SwishConfigProvider</item>
+                <item name="pensopay_klarna_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\KlarnaConfigProvider</item>
             </argument>
         </arguments>
     </type>

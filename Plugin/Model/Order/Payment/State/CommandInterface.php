@@ -8,10 +8,12 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\State\CommandInterface as BaseCommandInterface;
 use PensoPay\Gateway\Helper\Data;
 use PensoPay\Gateway\Model\Ui\Method\AnydayConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\ExpressBankConfigProvider;
 use PensoPay\Gateway\Model\Ui\Method\PensoPayConfigProvider;
 use PensoPay\Gateway\Model\Ui\Method\ViabillConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\PayPalConfigProvider;
+use PensoPay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
+use PensoPay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
+use PensoPay\Gateway\Model\Ui\Method\SwishConfigProvider;
+use PensoPay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 
 class CommandInterface
 {
@@ -36,8 +38,10 @@ class CommandInterface
             PensoPayConfigProvider::CODE,
             ViabillConfigProvider::CODE,
             AnydayConfigProvider::CODE,
-            ExpressBankConfigProvider::CODE,
-            PayPalConfigProvider::CODE,
+            ApplePayConfigProvider::CODE,
+            MobilePayConfigProvider::CODE,
+            SwishConfigProvider::CODE,
+            KlarnaConfigProvider::CODE,
         ], false)) {
             $orderStatus = Order::STATE_NEW;
             if ($orderStatus && $order->getState() === Order::STATE_PROCESSING) {

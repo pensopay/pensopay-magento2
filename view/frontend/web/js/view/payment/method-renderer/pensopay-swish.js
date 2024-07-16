@@ -7,10 +7,10 @@ define(
         'use strict';
         return Component.extend({
             getCode: function() {
-                return 'pensopay_expressbank';
+                return 'pensopay_swish';
             },
             getPaymentMethodExtra: function() {
-                return $('.checkout-expressbank-logos').html();
+                return $('.checkout-swish-logos').html();
             }
         });
     }

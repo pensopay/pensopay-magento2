@@ -76,31 +76,31 @@ class Callback extends Action
         $body = $this->getRequest()->getContent();
 
         try {
-            $response = json_decode($body);
-
             //Fetch private key from config and validate checksum
             $key = $this->_pensoPayHelper->getPrivateKey();
             $checksum = hash_hmac('sha256', $body, $key);
-            $submittedChecksum = $this->getRequest()->getServer('HTTP_QUICKPAY_CHECKSUM_SHA256');
+            $submittedChecksum = $this->getRequest()->getHeader('pensopay-signature');
 
             if ($checksum === $submittedChecksum) {
+                $response = json_decode($body);
+
                 //Make sure that payment is accepted
-                if ($response->accepted === true) {
+                if ($response->type === 'payment' && $response->event === 'payment.authorized') {
                     /**
                      * Load order by incrementId
                      * @var Order $order
                      */
-                    $order = $this->order->loadByIncrementId($response->order_id);
+                    $order = $this->order->loadByIncrementId($response->resource->order_id);
 
                     if (!$order->getId()) {
-                        $this->logger->debug('Failed to load order with id: ' . $response->order_id);
+                        $this->logger->debug('Failed to load order with id: ' . $response->resource->order_id);
                         return;
                     }
 
                     //Cancel order if testmode is disabled and this is a test payment
                     $testMode = $this->_pensoPayHelper->getIsTestmode();
 
-                    if (!$testMode && $response->test_mode === true) {
+                    if (!$testMode && $response->resource->testmode === true) {
                         $this->logger->debug('Order attempted paid with a test card but testmode is disabled.');
                         if (!$order->isCanceled()) {
                             $order->registerCancellation("Order attempted paid with test card")->save();
@@ -108,22 +108,26 @@ class Callback extends Action
                         return;
                     }
 
-                    //Add card metadata
+//                    Add card metadata
                     $payment = $order->getPayment();
-                    if (isset($response->metadata->type) && $response->metadata->type === 'card') {
-                        $payment->setCcType($response->metadata->brand);
-                        $payment->setCcLast4('xxxx-' . $response->metadata->last4);
-                        $payment->setCcExpMonth($response->metadata->exp_month);
-                        $payment->setCcExpYear($response->metadata->exp_year);
+                    if (isset($response->resource->payment_details) && !empty($response->resource->payment_details->last4)) {
+                        $payment->setCcType($response->resource->payment_details->brand);
+                        $payment->setCcLast4('xxxx-' . $response->resource->payment_details->last4);
+                        $payment->setCcExpMonth($response->resource->payment_details->exp_month);
+                        $payment->setCcExpYear($response->resource->payment_details->exp_year);
 
-                        $payment->setAdditionalInformation('cc_number', 'xxxx-' . $response->metadata->last4);
-                        $payment->setAdditionalInformation('exp_month', $response->metadata->exp_month);
-                        $payment->setAdditionalInformation('exp_year', $response->metadata->exp_year);
-                        $payment->setAdditionalInformation('cc_type', $response->metadata->brand);
+                        $payment->setAdditionalInformation('cc_number', 'xxxx-' . $response->resource->payment_details->last4);
+                        $payment->setAdditionalInformation('exp_month', $response->resource->payment_details->exp_month);
+                        $payment->setAdditionalInformation('exp_year', $response->resource->payment_details->exp_year);
+                        $payment->setAdditionalInformation('cc_type', $response->resource->payment_details->brand);
+                        $payment->setAdditionalInformation('bin', $response->resource->payment_details->bin);
+                        $payment->setAdditionalInformation('acquirer', $response->resource->payment_details->acquirer);
+                        $payment->setAdditionalInformation('is_3d_secure', $response->resource->payment_details->is_3d_secure);
+                        $payment->setAdditionalInformation('currency', $response->resource->currency);
                     } else {
-                        if (isset($response->metadata->payment_method)) {
-                            $payment->setCcType($response->metadata->payment_method);
-                            $payment->setAdditionalInformation('cc_type', $response->metadata->payment_method);
+                        if (isset($response->resource->payment_details->method)) {
+                            $payment->setCcType($response->resource->payment_details->method);
+                            $payment->setAdditionalInformation('cc_type', $response->resource->payment_details->method);
                         }
                     }
 
@@ -133,13 +137,12 @@ class Callback extends Action
                     $pensoPayment->save();
 
                     //Set order to processing
-
-//                    $stateProcessing = \Magento\Sales\Model\Order::STATE_PROCESSING;
-//                    if ($order->getState() !== $stateProcessing) {
-//                        $order->setState($stateProcessing)
-//                            ->setStatus($order->getConfig()->getStateDefaultStatus($stateProcessing))
-//                            ->save();
-//                    }
+                    $stateProcessing = Order::STATE_PROCESSING;
+                    if ($order->getState() !== $stateProcessing) {
+                        $order->setState($stateProcessing)
+                            ->setStatus($order->getConfig()->getStateDefaultStatus($stateProcessing))
+                            ->save();
+                    }
 
                     $this->_pensoPayHelper->setNewOrderStatus($order);
                     $order->save();
@@ -230,7 +233,7 @@ class Callback extends Action
     /**
      * Send order confirmation email
      *
-     * @param \Magento\Sales\Model\Order $order
+     * @param Order $order
      */
     private function sendOrderConfirmation($order)
     {

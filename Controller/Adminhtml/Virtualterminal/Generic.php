@@ -147,7 +147,7 @@ class Generic extends Action
             if ($payment === true) {
                 throw new \Exception(__('Error creating payment.'));
             }
-            $paymentLink = $payment['link'];
+            $paymentLink = $payment['resource']['link'];
             $this->_getSession()->setPaymentLink($paymentLink);
             $this->messageManager->addSuccessMessage($paymentLink);
 

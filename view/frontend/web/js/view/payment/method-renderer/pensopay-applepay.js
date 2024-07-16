@@ -7,10 +7,10 @@ define(
         'use strict';
         return Component.extend({
             getCode: function() {
-                return 'pensopay_paypal';
+                return 'pensopay_applepay';
             },
             getPaymentMethodExtra: function() {
-                return $('.checkout-paypal-logos').html();
+                return $('.checkout-applepay-logos').html();
             }
         });
     }

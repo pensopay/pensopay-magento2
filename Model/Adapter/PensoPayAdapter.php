@@ -19,14 +19,15 @@ use PensoPay\Gateway\Helper\Data as PensoPayHelperData;
 use PensoPay\Gateway\Model\Payment;
 use PensoPay\Gateway\Model\PaymentFactory;
 use PensoPay\Gateway\Model\Ui\Method\AnydayConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\ExpressBankConfigProvider;
 use PensoPay\Gateway\Model\Ui\Method\ViabillConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\PayPalConfigProvider;
+use PensoPay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
+use PensoPay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
+use PensoPay\Gateway\Model\Ui\Method\SwishConfigProvider;
+use PensoPay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 
 use Pensopay\Pensopay;
 use Psr\Log\LoggerInterface;
-use QuickPay\QuickPay;
 use Symfony\Component\Intl\Countries;
 
 class PensoPayAdapter
@@ -42,7 +43,7 @@ class PensoPayAdapter
     protected PensoPayHelperCheckout $_checkoutHelper;
     protected PaymentFactory $_paymentFactory;
     protected StoreManagerInterface $_storeManager;
-    protected ?StoreInterface $_frontStore;
+    protected ?StoreInterface $_frontStore = null;
     protected PensoPayHelperData $_pensoHelper;
     protected EncryptorInterface $_encryptor;
     protected EventManager $_eventManager;
@@ -172,34 +173,40 @@ class PensoPayAdapter
             $paymentData['autocapture'] = $attributes['AUTOCAPTURE'];
         }
 
-        $order = $this->orderRepository->get($attributes['ORDER_ID']);
-
-        switch ($order->getPayment()->getMethod()) {
-            case ViabillConfigProvider::CODE:
-                $paymentData['facilitator'] = 'viabill';
-                break;
-            case AnydayConfigProvider::CODE:
-                $paymentData['facilitator'] = 'anyday';
-                break;
-            case ExpressBankConfigProvider::CODE:
-                $paymentData['facilitator'] = 'expressbank';
-                break;
-            case PayPalConfigProvider::CODE:
-                $paymentData['facilitator'] = 'paypal';
-                break;
-            default: //Covers default payment method - pensopay
-                $paymentData['facilitator'] = 'creditcard';
-                break;
-        }
-
-        $storeId = $this->_pensoHelper->getStoreIdForOrderIncrement($attributes['INCREMENT_ID']);
-        if (is_numeric($storeId)) {
-            $this->setTransactionStore($storeId);
-        }
-
         $orderData = [];
         $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
         if (!$isVirtualTerminal) {
+            $order = $this->orderRepository->get($attributes['ORDER_ID']);
+
+            switch ($order->getPayment()->getMethod()) {
+                case ViabillConfigProvider::CODE:
+                    $paymentData['methods'][] = 'viabill';
+                    break;
+                case AnydayConfigProvider::CODE:
+                    $paymentData['methods'][] = 'anyday';
+                    break;
+                case MobilePayConfigProvider::CODE:
+                    $paymentData['methods'][] = 'mobilepay';
+                    break;
+                case ApplePayConfigProvider::CODE:
+                    $paymentData['methods'][] = 'applepay';
+                    break;
+                case SwishConfigProvider::CODE:
+                    $paymentData['methods'][] = 'swish';
+                    break;
+                case KlarnaConfigProvider::CODE:
+                    $paymentData['methods'][] = 'klarna';
+                    break;
+                default: //Covers default payment method - pensopay
+                    $paymentData['methods'][] = 'card';
+                    break;
+            }
+
+            $storeId = $this->_pensoHelper->getStoreIdForOrderIncrement($attributes['INCREMENT_ID']);
+            if (is_numeric($storeId)) {
+                $this->setTransactionStore($storeId);
+            }
+
             $shippingAddress = $attributes['SHIPPING_ADDRESS'];
             $orderData['shipping_address'] = [];
             $orderData['shipping_address']['name'] = $shippingAddress->getFirstName() . ' ' . $shippingAddress->getLastName();
@@ -243,7 +250,7 @@ class PensoPayAdapter
                     'name' => $item->getName(),
                     'sku' => $item->getSku(),
                     'price' => (float)(round(($item->getBaseRowTotalInclTax() - $item->getBaseDiscountAmount()) / $item->getQtyOrdered(), 2) * 100),
-                    'vat' => $item->getTaxPercent()
+                    'vat_rate' => $item->getTaxPercent() ?: 1
                 ];
             }
 
@@ -258,15 +265,19 @@ class PensoPayAdapter
 //            }
 
         } else {
+            $paymentData['methods'][] = 'card';
             $orderData['basket'] = [
                 [
                     'qty'        => 1,
-                    'item_no'    => 'virtualterminal',
-                    'item_name'  => 'Products',
-                    'item_price' => $attributes['AMOUNT'],
+                    'name'       => 'VirtualTerminal Payment',
+                    'sku'        => 'virtualterminal',
+                    'price'      => $attributes['AMOUNT'],
                     'vat_rate'   => 25, //TODO
                 ]
             ];
+            $orderData['shipping_address'] = [];
+            $orderData['billing_address'] = [];
+            $orderData['shipping'] = [];
         }
 
         $paymentData['order'] = $orderData;
@@ -280,37 +291,37 @@ class PensoPayAdapter
         return $paymentData;
     }
 
-    public function updatePaymentAndPaymentLink($attributes, $autoSave = true)
-    {
-        try {
-            $form = $this->_setupRequest($attributes);
-
-            $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
-            if ($isVirtualTerminal) {
-                $form['id'] = $attributes['ORDER_ID'];
-            }
-
-            $payments = $this->_client->request->patch(sprintf('/payments/%s', $form['id']), $form);
-            $paymentArray = $payments->asArray();
-            $paymentId = $paymentArray['id'];
-
-            $paymentArray['link'] = $this->createPaymentLink($attributes, $paymentId);
-
-            if ($isVirtualTerminal) {
-                $this->_setExtraVirtualTerminalData($attributes, $paymentArray);
-            }
-
-            if ($autoSave) {
-                $paymentArray['payment_id'] = $attributes['payment_id'];
-                $this->_autoSave($paymentArray, true);
-            }
-
-            return $paymentArray;
-        } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage());
-        }
-        return true;
-    }
+//    public function updatePaymentAndPaymentLink($attributes, $autoSave = true)
+//    {
+//        try {
+//            $form = $this->_setupRequest($attributes);
+//
+//            $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+//            if ($isVirtualTerminal) {
+//                $form['id'] = $attributes['ORDER_ID'];
+//            }
+//
+//            $payments = $this->_client->request->patch(sprintf('/payments/%s', $form['id']), $form);
+//            $paymentArray = $payments->asArray();
+//            $paymentId = $paymentArray['id'];
+//
+//            $paymentArray['link'] = $this->createPaymentLink($attributes, $paymentId);
+//
+//            if ($isVirtualTerminal) {
+//                $this->_setExtraVirtualTerminalData($attributes, $paymentArray);
+//            }
+//
+//            if ($autoSave) {
+//                $paymentArray['payment_id'] = $attributes['payment_id'];
+//                $this->_autoSave($paymentArray, true);
+//            }
+//
+//            return $paymentArray;
+//        } catch (\Exception $e) {
+//            $this->logger->critical($e->getMessage());
+//        }
+//        return true;
+//    }
 
     protected function _autoSave($payment, $update = false)
     {
@@ -332,23 +343,17 @@ class PensoPayAdapter
 
     /**
      * Capture payment
-     *
-     * @param array $attributes
-     * @return array|bool
      */
     public function capture(array $attributes)
     {
         try {
             $this->setTransactionStore($attributes['STORE_ID']);
-            $form = [
-                'id'     => $attributes['TXN_ID'],
-                'amount' => $attributes['AMOUNT'],
-            ];
 
             $id = $attributes['TXN_ID'];
+            $amount = $attributes['AMOUNT'];
 
-            $payments = $this->_client->request->post("/payments/{$id}/capture?synchronized", $form);
-            return $payments->asArray();
+            $payments = $this->_client->payments()->capture($id, $amount);
+            return $payments->toArray();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
         }
@@ -368,8 +373,8 @@ class PensoPayAdapter
         $this->logger->debug("Updating payment state for {$paymentId}");
 
         try {
-            $payments = $this->_client->request->get("/payments/{$paymentId}");
-            return $payments->asArray();
+            $payments = $this->_client->payments()->get($paymentId);
+            return $payments->toArray();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
             throw $e;
@@ -397,27 +402,11 @@ class PensoPayAdapter
         $this->logger->debug('Cancel payment');
         try {
             $this->setTransactionStore($attributes['STORE_ID']);
-            $form = [
-                'id' => $attributes['TXN_ID'],
-            ];
-
-            $this->logger->debug(var_export($form, true));
 
             $id = $attributes['TXN_ID'];
 
-            $payments = $this->_client->request->post("/payments/{$id}/cancel?synchronized", $form);
-            $paymentArray = $payments->asArray();
-
-            $this->logger->debug(var_export($paymentArray, true));
-
-            /**
-             * This is required to prevent a few obscure errors with cancelling payments on the QP Gateway.
-             * Since cancellation itself is not vital to normal operation this is okay.
-             */
-            $paymentArray['accepted'] = true;
-            $paymentArray['id'] = '000';
-
-            return $paymentArray;
+            $payments = $this->_client->payments()->cancel($id);
+            return $payments->toArray();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
         }
@@ -436,21 +425,12 @@ class PensoPayAdapter
         $this->logger->debug('Refund payment');
         try {
             $this->setTransactionStore($attributes['STORE_ID']);
-            $form = [
-                'id' => $attributes['TXN_ID'],
-                'amount' => $attributes['AMOUNT'],
-            ];
-
-            $this->logger->debug(var_export($form, true));
 
             $id = $attributes['TXN_ID'];
+            $amount = $attributes['AMOUNT'];
 
-            $payments = $this->_client->request->post("/payments/{$id}/refund?synchronized", $form);
-            $paymentArray = $payments->asArray();
-
-            $this->logger->debug(var_export($paymentArray, true));
-
-            return $paymentArray;
+            $payments = $this->_client->payments()->refund($id, $amount);
+            return $payments->toArray();
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
         }

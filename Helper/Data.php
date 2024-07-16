@@ -18,14 +18,11 @@ use PensoPay\Gateway\Model\Payment as PensoPayPayment;
 
 class Data extends AbstractHelper
 {
-    const TESTMODE_XML_PATH              = 'payment/pensopay/testmode';
-    const TRANSACTION_FEE_LABEL_XML_PATH = 'payment/pensopay/transaction_fee_label';
-    const TRANSACTION_FEE_SKU            = 'transaction_fee';
+    const TESTMODE_XML_PATH     = 'payment/pensopay/testmode';
+    const TRANSACTION_FEE_SKU   = 'transaction_fee';
     const API_KEY_XML_PATH      = 'payment/pensopay/api_key';
-    const BRANDING_ID_XML_PATH = 'payment/pensopay/branding_id';
-    const TRANSACTION_FEE_XML_PATH = 'payment/pensopay/transaction_fee';
-    const AUTOCAPTURE_XML_PATH = 'payment/pensopay/autocapture';
-    const TEXT_ON_STATEMENT_XML_PATH = 'payment/pensopay/text_on_statement';
+    const PRIVATE_KEY_XML_PATH  = 'payment/pensopay/private_key';
+    const AUTOCAPTURE_XML_PATH  = 'payment/pensopay/autocapture';
     const NEW_ORDER_STATUS_BEFORE_XML_PATH = 'payment/pensopay/new_order_status_before_payment';
     const NEW_ORDER_STATUS_XML_PATH = 'payment/pensopay/new_order_status';
 
@@ -153,6 +150,11 @@ class Data extends AbstractHelper
     public function getApiKey($storeId = null): string
     {
         return $this->scopeConfig->getValue(self::API_KEY_XML_PATH, ScopeInterface::SCOPE_STORE, $storeId) ?? '';
+    }
+
+    public function getPrivateKey($storeId = null): string
+    {
+        return $this->scopeConfig->getValue(self::PRIVATE_KEY_XML_PATH, ScopeInterface::SCOPE_STORE, $storeId) ?? '';
     }
 
     public function getIsAutocapture(): bool

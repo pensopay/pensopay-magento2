@@ -2,9 +2,10 @@
 
 namespace PensoPay\Gateway\Block\Adminhtml\Virtualterminal\Fieldset;
 
+use Magento\Framework\View\Element\AbstractBlock;
 use Magento\Framework\View\Element\Context;
 
-class Transactionlog extends \Magento\Framework\View\Element\AbstractBlock
+class Transactionlog extends AbstractBlock
 {
     /** @var \PensoPay\Gateway\Model\PaymentFactory $_paymentFactory */
     protected $_paymentFactory;

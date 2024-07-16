@@ -80,38 +80,12 @@ class Payment extends AbstractModel
 //        return sprintf('%s (%s)', $status, $this->getState());
     }
 
-    public function getMetadata()
-    {
-        if (!empty($this->getData('metadata'))) {
-            return json_decode($this->getData('metadata'), true);
-        }
-        return [];
-    }
-
-    public function getFirstOperation()
-    {
-        if (!empty($this->getOperations())) {
-            $operations = json_decode($this->getOperations(), true);
-            if (!empty($operations) && is_array($operations)) {
-                $firstOp = array_shift($operations);
-                if (!empty($firstOp) && is_array($firstOp)) {
-                    return [
-                        'type' => $firstOp['type'],
-                        'code' => $firstOp['qp_status_code'],
-                        'msg' => $firstOp['qp_status_msg']
-                    ];
-                }
-            }
-        }
-        return [];
-    }
-
     /**
      * @param array $payment
      */
     public function importFromRemotePayment($payment)
     {
-        if (!$this->_pensoPayHelper->getIsTestmode() && $payment['test_mode']) {
+        if (!$this->_pensoPayHelper->getIsTestmode() && $payment['resource']['testmode']) {
             $this->setState(self::STATE_REJECTED);
             return;
         }
@@ -127,35 +101,17 @@ class Payment extends AbstractModel
             }
         }
 
-        $amount = 0;
-        foreach ($payment['basket'] as $item) {
-            $amount += $item['item_price'];
-        }
-        if (isset($payment['shipping']['amount'])) {
-            $amount += $payment['shipping']['amount'];
-        }
-        $this->setAmount($amount / 100);
+        $this->setAmount($payment['amount'] / 100);
         $this->setCurrencyCode($payment['currency']);
-        if (!empty($payment['metadata']) && is_array($payment['metadata'])) {
+        //penso actions?
+//        if (!empty($payment['metadata']) && is_array($payment['metadata'])) {
 //            $this->setFraudProbability($payment['metadata']['fraud_suspected'] || $payment['metadata']['fraud_reported'] ? self::FRAUD_PROBABILITY_HIGH : self::FRAUD_PROBABILITY_NONE);
-        }
-        $this->setOperations(json_encode($payment['operations']));
-        $this->setMetadata(json_encode($payment['metadata']));
+//        }
+//        $this->setOperations(json_encode($payment['operations']));
+//        $this->setMetadata(json_encode($payment['metadata']));
         $this->setHash(md5($this->getReferenceId() . $this->getLink() . $this->getAmount()));
-
-        if (!empty($payment['operations'])) {
-            $amountCaptured = 0;
-            $amountRefunded = 0;
-            foreach ($payment['operations'] as $operation) {
-                if ($operation['type'] === 'capture') {
-                    $amountCaptured += $operation['amount'];
-                } elseif ($operation['type'] === 'refund') {
-                    $amountRefunded += $operation['amount'];
-                }
-            }
-            $this->setAmountCaptured($amountCaptured / 100);
-            $this->setAmountRefunded($amountRefunded / 100);
-        }
+        $this->setAmountCaptured($payment['captured'] / 100);
+        $this->setAmountRefunded($payment['refunded'] / 100);
     }
 
     /**
