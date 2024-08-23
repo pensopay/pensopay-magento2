@@ -85,7 +85,12 @@ class Payment extends AbstractModel
      */
     public function importFromRemotePayment($payment)
     {
-        if (!$this->_pensoPayHelper->getIsTestmode() && $payment['resource']['testmode']) {
+        if (isset($payment['resource'])) { //is callback
+            $payment = $payment['resource'];
+        }
+
+
+        if (!$this->_pensoPayHelper->getIsTestmode() && $payment['testmode']) {
             $this->setState(self::STATE_REJECTED);
             return;
         }
@@ -93,7 +98,7 @@ class Payment extends AbstractModel
         $this->setReferenceId($payment['id']);
         unset($payment['id']); //We don't want to override the object id with the remote id
         $this->addData($payment);
-        if (isset($payment['link']) && !empty($payment['link'])) {
+        if (!empty($payment['link'])) {
             if (is_array($payment['link'])) {
                 $this->setLink($payment['link']['url']);
             } else {
@@ -110,8 +115,12 @@ class Payment extends AbstractModel
 //        $this->setOperations(json_encode($payment['operations']));
 //        $this->setMetadata(json_encode($payment['metadata']));
         $this->setHash(md5($this->getReferenceId() . $this->getLink() . $this->getAmount()));
-        $this->setAmountCaptured($payment['captured'] / 100);
-        $this->setAmountRefunded($payment['refunded'] / 100);
+        if (isset($payment['captured'])) {
+            $this->setAmountCaptured($payment['captured'] / 100);
+        }
+        if (isset($payment['refunded'])) {
+            $this->setAmountRefunded($payment['refunded'] / 100);
+        }
     }
 
     /**

@@ -14,6 +14,8 @@ use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Test\Di\WrappedClass\Logger;
+use PensoPay\Client\Model\PaymentCapturePaymentRequest;
+use PensoPay\Client\Model\PaymentRefundPaymentRequest;
 use PensoPay\Gateway\Helper\Checkout as PensoPayHelperCheckout;
 use PensoPay\Gateway\Helper\Data as PensoPayHelperData;
 use PensoPay\Gateway\Model\Payment;
@@ -26,7 +28,7 @@ use PensoPay\Gateway\Model\Ui\Method\SwishConfigProvider;
 use PensoPay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Magento\Framework\Event\ManagerInterface as EventManager;
 
-use Pensopay\Pensopay;
+use Pensopay\Client\Api\PaymentsApi as PensoPayClient;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Intl\Countries;
 
@@ -38,8 +40,7 @@ class PensoPayAdapter
     protected ResolverInterface $resolver;
     protected ScopeConfigInterface $scopeConfig;
     protected OrderRepositoryInterface $orderRepository;
-    protected string $_apiKey = '';
-    protected Pensopay $_client;
+    protected $_client;
     protected PensoPayHelperCheckout $_checkoutHelper;
     protected PaymentFactory $_paymentFactory;
     protected StoreManagerInterface $_storeManager;
@@ -76,10 +77,7 @@ class PensoPayAdapter
         $this->_encryptor = $encryptor;
         $this->_eventManager = $eventManager;
 
-        $this->_apiKey = $this->helper->getApiKey();
-
-//        $this->_apiKey = 'eda05a709b950ca9d78b2622d613bfd2068459ece3e64eb1efe97bceb791cfc0';
-        $this->_client = Pensopay::create($this->_apiKey);
+        $this->_client = new \PensoPay\Client\Api\PaymentsApi(new \GuzzleHttp\Client(), $this->getClientConfiguration(null));
     }
 
     /**
@@ -120,11 +118,14 @@ class PensoPayAdapter
             $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
             $paymentData = $this->_setupRequest($attributes);
 
-            $paymentObject = \Pensopay\Model\Payments\Payment::create($paymentData);
-            /** @var \Pensopay\Model\Payments\Payment $payment */
-            $payment = $this->_client->payments()->create($paymentObject);
+            try {
+                $requestPayload = new \PensoPay\Client\Model\PaymentCreatePaymentRequest($paymentData);
+                $result = $this->_client->createPayment($requestPayload);
+                $paymentArray = json_decode((string)$result, true);
+            } catch (Exception $e) {
+                echo 'Exception when calling PaymentsApi->createPayment: ', $e->getMessage(), PHP_EOL;
+            }
 
-            $paymentArray = $payment->toArray();
             $paymentId = $paymentArray['id'];
 
             if ($isVirtualTerminal) {
@@ -160,7 +161,8 @@ class PensoPayAdapter
             'order_id' => $attributes['INCREMENT_ID'],
             'currency' => $attributes['CURRENCY'],
             'amount' => $attributes['AMOUNT'],
-            'callback_url' => $this->getFrontUrl('pensopay/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
+            'callback_url' => 'https://2706-93-176-77-122.ngrok-free.app/pensopay/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
+//            'callback_url' => $this->getFrontUrl('pensopay/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
             'testmode' => $this->helper->getIsTestMode(),
         ];
 
@@ -231,7 +233,7 @@ class PensoPayAdapter
 
 //            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
                 $orderData['shipping'] = [
-                    'amount' => $order->getBaseShippingInclTax() * 100,
+//                    'amount' => $order->getBaseShippingInclTax() * 100,
                     'method' => $order->getShippingMethod(),
                     'company' => $order->getShippingDescription(),
                     'vat_rate' => 100 / ($order->getBaseShippingAmount() / (($order->getBaseShippingInclTax() - $order->getBaseShippingAmount()) ?: 1))
@@ -352,8 +354,9 @@ class PensoPayAdapter
             $id = $attributes['TXN_ID'];
             $amount = $attributes['AMOUNT'];
 
-            $payments = $this->_client->payments()->capture($id, $amount);
-            return $payments->toArray();
+            $requestPayload = new PaymentCapturePaymentRequest([$amount]);
+            $result = $this->_client->capturePayment($id, $requestPayload);
+            return json_decode((string)$result, true);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
         }
@@ -373,22 +376,30 @@ class PensoPayAdapter
         $this->logger->debug("Updating payment state for {$paymentId}");
 
         try {
-            $payments = $this->_client->payments()->get($paymentId);
-            return $payments->toArray();
+            return json_decode((string)$this->_client->getPayment($paymentId), true);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
             throw $e;
         }
     }
 
-    public function setTransactionStore($storeId)
+    protected function getApiKey($storeId = null)
     {
         $apiKey = $this->helper->getApiKey($storeId);
-        if (empty($apiKey)) {
+        if (empty($apiKey) && $storeId) {
             $apiKey = $this->helper->getApiKey(null);
         }
-        $this->_apiKey = $apiKey;
-        $this->_client = Pensopay::create($this->_apiKey);
+        return $apiKey;
+    }
+
+    protected function getClientConfiguration($storeId = null)
+    {
+        return \PensoPay\Client\Configuration::getDefaultConfiguration()->setAccessToken($this->getApiKey($storeId));
+    }
+
+    public function setTransactionStore($storeId)
+    {
+        $this->_client = new \PensoPay\Client\Api\PaymentsApi(new \GuzzleHttp\Client(), $this->getClientConfiguration($storeId));
     }
 
     /**
@@ -405,8 +416,7 @@ class PensoPayAdapter
 
             $id = $attributes['TXN_ID'];
 
-            $payments = $this->_client->payments()->cancel($id);
-            return $payments->toArray();
+            return json_decode((string)$this->_client->cancelPayment($id), true);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
         }
@@ -429,8 +439,9 @@ class PensoPayAdapter
             $id = $attributes['TXN_ID'];
             $amount = $attributes['AMOUNT'];
 
-            $payments = $this->_client->payments()->refund($id, $amount);
-            return $payments->toArray();
+            $requestPayload = new PaymentRefundPaymentRequest([$amount]);
+            $result = $this->_client->refundPayment($id, $requestPayload);
+            return json_decode((string)$result, true);
         } catch (\Exception $e) {
             $this->logger->critical($e->getMessage());
         }

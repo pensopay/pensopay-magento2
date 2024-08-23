@@ -128,7 +128,6 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensoPayApplePayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
-            <argument name="validatorPool" xsi:type="object">ApplePayValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensoPayApplePayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -177,6 +176,13 @@
             <argument name="methodCode" xsi:type="const">\PensoPay\Gateway\Model\Ui\Method\SwishConfigProvider::CODE</argument>
         </arguments>
     </virtualType>
+    <virtualType name="SwishValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="currency" xsi:type="string">PensoPay\Gateway\Gateway\Validator\Swish\CurrencyValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
 
     <!-- Klarna -->
     <virtualType name="PensoPayKlarnaFacade" type="Magento\Payment\Model\Method\Adapter">
@@ -186,7 +192,6 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensoPayKlarnaValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensoPayCommandPool</argument>
-            <argument name="validatorPool" xsi:type="object">KlarnaValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensoPayKlarnaValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">

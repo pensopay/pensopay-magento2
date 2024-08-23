@@ -5,23 +5,20 @@
  * @var \PensoPay\Gateway\Block\Info $block
  * @see \PensoPay\Gateway\Block\Info
  */
+
+use PensoPay\Gateway\Helper\Transaction;
+
 $specificInfo = $block->getSpecificInformation();
 ?>
 <?= $block->escapeHtml($block->getMethod()->getTitle()) ?>
 
 <?php
 $payment = $block->getInfo();
-
 $transactionId = $payment->getLastTransId();
 //get object manager
-$objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-$paymentFactory = $objectManager->get(\PensoPay\Gateway\Model\PaymentFactory::class);
-$paymentAdapter = $objectManager->get(\PensoPay\Gateway\Model\Adapter\PensoPayAdapter::class);
-$pensoPayment = $paymentFactory->create();
-$pensoPayment->load($payment->getOrder()->getIncrementId(), 'order_id');
-$paymentInfo = $paymentAdapter->getPayment($transactionId);
-$pensoPayment->importFromRemotePayment($paymentInfo);
-$pensoPayment->save();
+
+$transactionHelper = $this->helper(Transaction::class);
+$transactionHelper->getPaymentForOrderId($payment->getOrder()->getIncrementId(), $transactionId);
 
 if ($payment !== null): ?>
     <table border="0">

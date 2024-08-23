@@ -3,51 +3,53 @@
 namespace PensoPay\Gateway\Controller\Payment;
 
 use Magento\Framework\App\Action\Action;
+use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
+use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use PensoPay\Gateway\Helper\Data;
+use PensoPay\Gateway\Model\Payment;
+use PensoPay\Gateway\Model\PaymentFactory;
+use Psr\Log\LoggerInterface;
 
 class Callback extends Action
 {
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var LoggerInterface
      */
     protected $logger;
 
     /**
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @var ScopeConfigInterface
      */
     protected $scopeConfig;
 
     /**
-     * @var \Magento\Sales\Api\Data\OrderInterface
+     * @var OrderInterface
      */
     protected $order;
 
     /**
-     * @var Order\Email\Sender\OrderSender
+     * @var OrderSender
      */
     protected $orderSender;
 
-    /** @var \PensoPay\Gateway\Helper\Data $_pensoPayHelper */
+    /** @var Data $_pensoPayHelper */
     protected $_pensoPayHelper;
 
     protected $_pensoPaymentFactory;
 
-    /**
-     * Class constructor
-     * @param \Magento\Framework\App\Action\Context              $context
-     * @param \Psr\Log\LoggerInterface                           $logger
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
-        \Psr\Log\LoggerInterface $logger,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Sales\Api\Data\OrderInterface $order,
-        \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
-        \PensoPay\Gateway\Helper\Data $pensoPayHelper,
-        \PensoPay\Gateway\Model\PaymentFactory $paymentFactory
+        Context $context,
+        LoggerInterface $logger,
+        ScopeConfigInterface $scopeConfig,
+        OrderInterface $order,
+        OrderSender $orderSender,
+        Data $pensoPayHelper,
+        PaymentFactory $paymentFactory
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
@@ -84,7 +86,7 @@ class Callback extends Action
             if ($checksum === $submittedChecksum) {
                 $response = json_decode($body);
 
-                //Make sure that payment is accepted
+                //Make sure that payment is accepted - right now we're ignoring other events
                 if ($response->type === 'payment' && $response->event === 'payment.authorized') {
                     /**
                      * Load order by incrementId
@@ -131,6 +133,7 @@ class Callback extends Action
                         }
                     }
 
+                    /** @var Payment $pensoPayment */
                     $pensoPayment = $this->_pensoPaymentFactory->create();
                     $pensoPayment->load($order->getIncrementId(), 'order_id');
                     $pensoPayment->importFromRemotePayment(json_decode($body, true));
@@ -171,14 +174,14 @@ class Callback extends Action
     {
         try {
             foreach ($order->getAllItems() as $orderItem) {
-                if ($orderItem->getSku() === \PensoPay\Gateway\Helper\Data::TRANSACTION_FEE_SKU) {
+                if ($orderItem->getSku() === Data::TRANSACTION_FEE_SKU) {
                     return;
                 }
             }
 
             /** @var \Magento\Sales\Model\Order\Item $item */
             $item = $this->_objectManager->create(\Magento\Sales\Model\Order\Item::class);
-            $item->setSku(\PensoPay\Gateway\Helper\Data::TRANSACTION_FEE_SKU);
+            $item->setSku(Data::TRANSACTION_FEE_SKU);
 
             //Calculate fee price
             $feeBase = (float)$fee / 100;

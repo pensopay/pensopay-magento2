@@ -14,7 +14,7 @@
   "require": {
     "php": ">=7.4",
     "symfony/intl": "^5.0 || ^6.0",
-    "pensopay/php-pensopay": "*",
+    "pensopay/pensopay-php": "*",
     "ext-json": "*"
   },
   "type": "magento2-module",
