@@ -1,25 +1,40 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <type name="Magento\Checkout\Model\CompositeConfigProvider">
         <arguments>
             <argument name="configProviders" xsi:type="array">
-                <item name="pensopay_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\PensoPayConfigProvider</item>
-                <item name="pensopay_viabill_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\ViabillConfigProvider</item>
-                <item name="pensopay_anyday_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\AnydayConfigProvider</item>
-                <item name="pensopay_mobilepay_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\MobilePayConfigProvider</item>
-                <item name="pensopay_applepay_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\ApplePayConfigProvider</item>
-                <item name="pensopay_swish_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\SwishConfigProvider</item>
-                <item name="pensopay_klarna_config_provider" xsi:type="object">PensoPay\Gateway\Model\Ui\Method\KlarnaConfigProvider</item>
+                <item name="pensopay_gateway_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider
+                </item>
+                <item name="pensopay_gateway_viabill_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider
+                </item>
+                <item name="pensopay_gateway_anyday_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider
+                </item>
+                <item name="pensopay_gateway_mobilepay_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider
+                </item>
+                <item name="pensopay_gateway_applepay_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider
+                </item>
+                <item name="pensopay_gateway_swish_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider
+                </item>
+                <item name="pensopay_gateway_klarna_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider
+                </item>
             </argument>
         </arguments>
     </type>
 
     <!-- Viabill -->
     <type name="Magento\Framework\Pricing\Render">
-        <plugin name="viabill-tag" type="PensoPay\Gateway\Plugin\Framework\Pricing\Render" />
+        <plugin name="pensopaygw-viabill-tag" type="Pensopay\Gateway\Plugin\Framework\Pricing\Render"/>
     </type>
 
     <type name="Magento\Framework\App\Request\CsrfValidator">
-        <plugin name="pensopay-skipcsrf-translate" type="PensoPay\Gateway\Plugin\Framework\App\Request\CsrfValidator" />
+        <plugin name="pensopaygw-pensopay-skipcsrf-translate" type="Pensopay\Gateway\Plugin\Framework\App\Request\CsrfValidator"/>
     </type>
 </config>

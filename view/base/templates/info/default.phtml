@@ -1,12 +1,14 @@
 <?php
 
 // @codingStandardsIgnoreFile
+
 /**
- * @var \PensoPay\Gateway\Block\Info $block
- * @see \PensoPay\Gateway\Block\Info
+ * @var Info $block
+ * @see \Pensopay\Gateway\Block\Info
  */
 
-use PensoPay\Gateway\Helper\Transaction;
+use Pensopay\Gateway\Block\Info;
+use Pensopay\Gateway\Helper\Transaction;
 
 $specificInfo = $block->getSpecificInformation();
 ?>
@@ -31,11 +33,11 @@ if ($payment !== null): ?>
         <tr>
             <td><?= __('Card Type:') ?></td>
             <?php
-                $cardImagePath = sprintf('PensoPay_Gateway::images/pensopaypayment/%s.png', $payment->getCcType() ?? '');
-                $cardImageUrl = $this->getViewFileUrl($cardImagePath);
+            $cardImagePath = sprintf('Pensopay_Gateway::images/pensopaypayment/%s.png', $payment->getCcType() ?? '');
+            $cardImageUrl = $this->getViewFileUrl($cardImagePath);
             ?>
             <td>
-                <img src="<?= $cardImageUrl; ?>" width="40" alt="<?= $payment->getCcType() ?? '' ?>" />
+                <img src="<?= $cardImageUrl; ?>" width="40" alt="<?= $payment->getCcType() ?? '' ?>"/>
             </td>
         </tr>
         <tr>
@@ -57,11 +59,11 @@ if ($payment !== null): ?>
             <td><?= $payment->getAdditionalInformation()['is_3d_secure'] ?? '' ? __('Yes') : __('No'); ?></td>
         </tr>
     </table>
-    <br />
+    <br/>
 <?php else: ?>
-    <br />
+    <br/>
     <?= __('Der er endnu ikke registreret nogen betaling for denne ordre!'); ?>
-    <br />
+    <br/>
 <?php endif; ?>
 
 <?= $block->getChildHtml() ?>

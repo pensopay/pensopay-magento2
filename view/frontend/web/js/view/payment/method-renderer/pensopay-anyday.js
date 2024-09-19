@@ -1,15 +1,15 @@
 define(
     [
-        'PensoPay_Gateway/js/view/payment/method-renderer/pensopay',
+        'Pensopay_Gateway/js/view/payment/method-renderer/pensopay',
         'jquery'
     ],
     function (Component, $) {
         'use strict';
         return Component.extend({
-            getCode: function() {
+            getCode: function () {
                 return 'pensopay_anyday';
             },
-            getPaymentMethodExtra: function() {
+            getPaymentMethodExtra: function () {
                 return $('.checkout-anyday-logos').html();
             }
         });

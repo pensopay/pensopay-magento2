@@ -1,22 +1,16 @@
 <?php
 
-namespace PensoPay\Gateway\Ui\DataProvider\Payment\Form;
+namespace Pensopay\Gateway\Ui\DataProvider\Payment\Form;
 
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use Magento\Ui\DataProvider\Modifier\PoolInterface;
-use PensoPay\Gateway\Model\ResourceModel\Payment\CollectionFactory;
+use Pensopay\Gateway\Model\ResourceModel\Payment\CollectionFactory;
 
 class PaymentDataProvider extends AbstractDataProvider
 {
-    /**
-     * @var PoolInterface
-     */
-    private $pool;
+    private PoolInterface $pool;
 
-    /**
-     * @var array
-     */
-    protected $_loadedData;
+    protected array $_loadedData;
 
     /**
      * @param string $name
@@ -35,7 +29,8 @@ class PaymentDataProvider extends AbstractDataProvider
         PoolInterface $pool,
         array $meta = [],
         array $data = []
-    ) {
+    )
+    {
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
         $this->collection = $collectionFactory->create();
         $this->pool = $pool;

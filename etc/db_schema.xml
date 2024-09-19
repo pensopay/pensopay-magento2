@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- Define the new table 'pensopay_gateway' -->
+    <table name="pensopay_gateway" resource="default" engine="innodb" comment="pensopay Virtual Terminal Payments">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="Increment ID"/>
+        <column xsi:type="int" name="reference_id" unsigned="true" nullable="false" comment="Reference ID"/>
+        <column xsi:type="smallint" name="is_virtualterminal" nullable="false" default="0" comment="Is Payment VirtualTerminal"/>
+        <column xsi:type="varchar" name="order_id" nullable="false" length="255" comment="Order ID"/>
+        <column xsi:type="varchar" name="accepted" nullable="false" length="255" comment="Accepted by provider"/>
+        <column xsi:type="varchar" name="currency" nullable="false" length="255" comment="Currency"/>
+        <column xsi:type="varchar" name="state" nullable="false" length="255" comment="State"/>
+        <column xsi:type="text" name="link" nullable="false" comment="Payment Link"/>
+        <column xsi:type="decimal" name="amount" nullable="false" precision="12" scale="4" comment="Amount"/>
+        <column xsi:type="decimal" name="amount_refunded" nullable="false" precision="12" scale="4" comment="Amount Refunded"/>
+        <column xsi:type="decimal" name="amount_captured" nullable="false" precision="12" scale="4" comment="Amount Captured"/>
+        <column xsi:type="text" name="locale_code" nullable="false" comment="Language"/>
+        <column xsi:type="smallint" name="autocapture" nullable="false" default="0" comment="Autocapture"/>
+        <column xsi:type="smallint" name="autofee" nullable="false" default="0" comment="Autofee"/>
+        <column xsi:type="varchar" name="customer_name" nullable="false" length="255" comment="Customer Name"/>
+        <column xsi:type="varchar" name="customer_email" nullable="false" length="255" comment="Customer Email"/>
+        <column xsi:type="varchar" name="customer_street" nullable="false" length="255" comment="Customer Street"/>
+        <column xsi:type="varchar" name="customer_zipcode" nullable="false" length="255" comment="Customer Zipcode"/>
+        <column xsi:type="varchar" name="customer_city" nullable="false" length="255" comment="Customer City"/>
+        <column xsi:type="timestamp" name="created_at" nullable="true" default="NULL" on_update="false" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" nullable="true" default="NULL" on_update="false" comment="Updated At"/>
+        <column xsi:type="text" name="operations" nullable="false" comment="Operations"/>
+        <column xsi:type="text" name="metadata" nullable="false" comment="Metadata"/>
+        <column xsi:type="varchar" name="fraud_probability" nullable="false" length="255" comment="Fraud Probability"/>
+        <column xsi:type="text" name="hash" nullable="false" comment="Payment Hash"/>
+        <column xsi:type="varchar" name="acquirer" nullable="false" length="50" comment="Acquirer"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+    </table>
+
+    <!-- Add columns to 'quote' table -->
+    <table name="quote">
+        <column xsi:type="decimal" name="card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Card Surcharge"/>
+        <column xsi:type="decimal" name="base_card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Base Card Surcharge"/>
+    </table>
+
+    <!-- Add columns to 'quote_address' table -->
+    <table name="quote_address">
+        <column xsi:type="decimal" name="card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Card Surcharge"/>
+        <column xsi:type="decimal" name="base_card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Base Card Surcharge"/>
+    </table>
+
+    <!-- Add columns to 'sales_order' table -->
+    <table name="sales_order">
+        <column xsi:type="decimal" name="card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Card Surcharge"/>
+        <column xsi:type="decimal" name="base_card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Base Card Surcharge"/>
+    </table>
+
+    <!-- Add columns to 'sales_invoice' table -->
+    <table name="sales_invoice">
+        <column xsi:type="decimal" name="card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Card Surcharge"/>
+        <column xsi:type="decimal" name="base_card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Base Card Surcharge"/>
+    </table>
+
+    <!-- Add columns to 'sales_creditmemo' table -->
+    <table name="sales_creditmemo">
+        <column xsi:type="decimal" name="card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Card Surcharge"/>
+        <column xsi:type="decimal" name="base_card_surcharge" nullable="true" precision="12" scale="4" default="0.0000" comment="Base Card Surcharge"/>
+    </table>
+</schema>

@@ -1,25 +1,25 @@
 <?php
 
-namespace PensoPay\Gateway\Helper;
+namespace Pensopay\Gateway\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use PensoPay\Gateway\Model\Adapter\PensoPayAdapter;
-use PensoPay\Gateway\Model\PaymentFactory;
+use Pensopay\Gateway\Model\Adapter\PensopayAdapter;
+use Pensopay\Gateway\Model\PaymentFactory;
 
 class Transaction extends AbstractHelper
 {
 
     protected PaymentFactory $_paymentFactory;
-    protected PensoPayAdapter $_pensoPayAdapter;
+    protected PensopayAdapter $_pensoPayAdapter;
 
     public function __construct(
-        Context $context,
-        PaymentFactory $paymentFactory,
-        PensoPayAdapter $pensoPayAdapter
-    ){
+        Context         $context,
+        PaymentFactory  $paymentFactory,
+        PensopayAdapter $pensoPayAdapter
+    )
+    {
         parent::__construct($context);
-
         $this->_paymentFactory = $paymentFactory;
         $this->_pensoPayAdapter = $pensoPayAdapter;
     }

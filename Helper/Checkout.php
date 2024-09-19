@@ -1,16 +1,15 @@
 <?php
 
-namespace PensoPay\Gateway\Helper;
+namespace Pensopay\Gateway\Helper;
 
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Helper\Data as PaymentHelper;
 use Magento\Payment\Model\Config;
 use Magento\Sales\Model\Order;
 use Magento\Store\Model\ScopeInterface;
-use PensoPay\Gateway\Model\Config\Source\CheckoutMethods;
+use Pensopay\Gateway\Model\Config\Source\CheckoutMethods;
 
 /**
  * Checkout workflow helper
@@ -71,7 +70,7 @@ class Checkout extends AbstractHelper
         return $this->_checkoutSession->restoreQuote();
     }
 
-    public function getPensoPayLogos(): array
+    public function getPensopayLogos(): array
     {
         $logos = $this->scopeConfig->getValue(self::XML_PATH_CHECKOUT_CARDLOGOS, ScopeInterface::SCOPE_STORE);
         if (!empty($logos)) {

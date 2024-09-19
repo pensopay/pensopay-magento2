@@ -1,31 +1,28 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Adminhtml\Auxiliary;
+namespace Pensopay\Gateway\Controller\Adminhtml\Auxiliary;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\DB\Transaction;
-use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Magento\Sales\Model\Order;
 use Magento\Sales\Controller\Adminhtml\Order as OrderController;
+use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\OrderRepository;
-use Magento\Ui\Component\MassAction\Filter;
-use Magento\Sales\Api\OrderManagementInterface;
 
 class Masscapture extends Action
 {
-    /** @var OrderRepository $_orderRepository */
-    protected $_orderRepository;
+    protected OrderRepository $_orderRepository;
 
-    /** @var Transaction $_transaction */
-    protected $_transaction;
+    protected Transaction $_transaction;
 
     public function __construct(
-        Context $context,
+        Context         $context,
         OrderRepository $orderRepository,
-        Transaction $transaction
-    ) {
+        Transaction     $transaction
+    )
+    {
         parent::__construct($context);
         $this->_orderRepository = $orderRepository;
         $this->_transaction = $transaction;
@@ -41,8 +38,8 @@ class Masscapture extends Action
                 $order = $this->_orderRepository->get($orderId);
 
                 $method = $order->getPayment()->getMethod();
-                if (strpos($method, 'pensopay') === false) {
-                    $this->messageManager->addErrorMessage(__('%1 Order was not placed using PensoPay', $order->getIncrementId()));
+                if (!str_contains($method, 'pensopay')) {
+                    $this->messageManager->addErrorMessage(__('%1 Order was not placed using pensopay', $order->getIncrementId()));
                     continue;
                 }
 
@@ -64,7 +61,7 @@ class Masscapture extends Action
                 $order->setState(Order::STATE_PROCESSING)->setStatus(Order::STATE_PROCESSING);
                 $this->_transaction->addObject($invoice)->addObject($order)->save();
                 $success++;
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
             }
         }

@@ -18,8 +18,8 @@ define([
      * @param {String} action
      */
     function initListener(callback, action) {
-        var selector    = selectorPrefix ? selectorPrefix + ' ' + buttons[action] : buttons[action],
-            elem        = $(selector)[0];
+        var selector = selectorPrefix ? selectorPrefix + ' ' + buttons[action] : buttons[action],
+            elem = $(selector)[0];
 
         if (!elem) {
             return;
@@ -38,8 +38,8 @@ define([
      * @param {String} action
      */
     function destroyListener(action) {
-        var selector    = selectorPrefix ? selectorPrefix + ' ' + buttons[action] : buttons[action],
-            elem        = $(selector)[0];
+        var selector = selectorPrefix ? selectorPrefix + ' ' + buttons[action] : buttons[action],
+            elem = $(selector)[0];
 
         if (!elem) {
             return;

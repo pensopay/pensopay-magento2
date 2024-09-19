@@ -1,6 +1,6 @@
 <?php
 
-namespace PensoPay\Gateway\Model\Config\Source;
+namespace Pensopay\Gateway\Model\Config\Source;
 
 use Magento\Framework\Option\ArrayInterface;
 

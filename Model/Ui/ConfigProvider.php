@@ -1,5 +1,6 @@
 <?php
-namespace PensoPay\Gateway\Model\Ui;
+
+namespace Pensopay\Gateway\Model\Ui;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 
@@ -18,7 +19,7 @@ class ConfigProvider implements ConfigProviderInterface
         return [
             'payment' => [
                 $this->_code => [
-                    'redirectUrl' => 'pensopay/payment/redirect',
+                    'redirectUrl' => 'pensopaygw/payment/redirect',
                 ]
             ]
         ];

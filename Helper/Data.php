@@ -1,6 +1,6 @@
 <?php
 
-namespace PensoPay\Gateway\Helper;
+namespace Pensopay\Gateway\Helper;
 
 use Magento\Backend\Model\Session;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -14,16 +14,15 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderRepository;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
-use PensoPay\Gateway\Model\Payment as PensoPayPayment;
+use Pensopay\Gateway\Model\Payment as PensopayPayment;
 
 class Data extends AbstractHelper
 {
-    const TESTMODE_XML_PATH     = 'payment/pensopay/testmode';
-    const TRANSACTION_FEE_SKU   = 'transaction_fee';
-    const API_KEY_XML_PATH      = 'payment/pensopay/api_key';
-    const PRIVATE_KEY_XML_PATH  = 'payment/pensopay/private_key';
-    const AUTOCAPTURE_XML_PATH  = 'payment/pensopay/autocapture';
-    const NEW_ORDER_STATUS_BEFORE_XML_PATH = 'payment/pensopay/new_order_status_before_payment';
+    const TESTMODE_XML_PATH = 'payment/pensopay/testmode';
+    const TRANSACTION_FEE_SKU = 'transaction_fee';
+    const API_KEY_XML_PATH = 'payment/pensopay/api_key';
+    const PRIVATE_KEY_XML_PATH = 'payment/pensopay/private_key';
+    const AUTOCAPTURE_XML_PATH = 'payment/pensopay/autocapture';
     const NEW_ORDER_STATUS_XML_PATH = 'payment/pensopay/new_order_status';
 
     protected Session $_backendSession;
@@ -32,12 +31,13 @@ class Data extends AbstractHelper
     protected SearchCriteriaBuilder $_searchCriteriaBuilder;
 
     public function __construct(
-        Context $context,
-        Session $backendSession,
-        TransportBuilder $transportBuilder,
-        OrderRepository $orderRepository,
+        Context               $context,
+        Session               $backendSession,
+        TransportBuilder      $transportBuilder,
+        OrderRepository       $orderRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder
-    ) {
+    )
+    {
         parent::__construct($context);
         $this->_backendSession = $backendSession;
         $this->_transportBuilder = $transportBuilder;
@@ -66,14 +66,14 @@ class Data extends AbstractHelper
     public function getStatusColorCode($value): string
     {
         switch ($value) {
-            case PensoPayPayment::STATE_PENDING:
+            case PensopayPayment::STATE_PENDING:
                 $colorClass = 'grid-severity-minor';
                 break;
-            case PensoPayPayment::STATE_REJECTED:
+            case PensopayPayment::STATE_REJECTED:
                 $colorClass = 'grid-severity-major';
                 break;
-            case PensoPayPayment::STATE_AUTHORIZED:
-            case PensoPayPayment::STATE_CAPTURED:
+            case PensopayPayment::STATE_AUTHORIZED:
+            case PensopayPayment::STATE_CAPTURED:
             default:
                 $colorClass = 'grid-severity-notice';
         }
@@ -99,7 +99,7 @@ class Data extends AbstractHelper
             'email' => $senderEmail,
         ];
 
-        $transport = $this->_transportBuilder->setTemplateIdentifier('pensopay_paymentlink_email')
+        $transport = $this->_transportBuilder->setTemplateIdentifier('pensopay_gateway_paymentlink_email')
             ->setTemplateOptions([
                 'area' => Area::AREA_FRONTEND,
                 'store' => Store::DEFAULT_STORE_ID
@@ -115,7 +115,7 @@ class Data extends AbstractHelper
 
     public function setNewOrderStatus(OrderInterface $order, $beforePayment = false): self
     {
-        $status = $beforePayment ? $this->getNewOrderStatusBeforePayment() : $this->getNewOrderStatus();
+        $status = $beforePayment ? $order->getPayment()->getMethodInstance()->getOrderStatus() : $this->getNewOrderStatus();
 
         $states = [
             Order::STATE_NEW,
@@ -165,10 +165,5 @@ class Data extends AbstractHelper
     public function getNewOrderStatus(): string
     {
         return $this->scopeConfig->getValue(self::NEW_ORDER_STATUS_XML_PATH, ScopeInterface::SCOPE_STORE);
-    }
-
-    public function getNewOrderStatusBeforePayment(): string
-    {
-        return $this->scopeConfig->getValue(self::NEW_ORDER_STATUS_BEFORE_XML_PATH, ScopeInterface::SCOPE_STORE);
     }
 }

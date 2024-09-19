@@ -1,5 +1,6 @@
 <?php
-namespace PensoPay\Gateway\Helper;
+
+namespace Pensopay\Gateway\Helper;
 
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
@@ -21,7 +22,7 @@ class Viabill extends AbstractHelper
 
     const TYPE_PRODUCT = 'product';
     const TYPE_CATALOG = 'list';
-    const TYPE_CART    = 'basket';
+    const TYPE_CART = 'basket';
     const TYPE_CHECKOUT = 'payment';
 
     const XML_VIABILL_SHOP_ID = 'payment/pensopay_viabill/shop_id';
@@ -38,10 +39,11 @@ class Viabill extends AbstractHelper
     protected StoreManagerInterface $_storeManager;
 
     public function __construct(
-        Context $context,
-        LayoutInterface $layout,
+        Context               $context,
+        LayoutInterface       $layout,
         StoreManagerInterface $storeManager
-    ) {
+    )
+    {
         $this->_layout = $layout;
         $this->_storeManager = $storeManager;
         parent::__construct($context);
@@ -108,14 +110,14 @@ class Viabill extends AbstractHelper
     public function renderViabillPrice($type, $price, $dynamicPriceSelector = ''): string
     {
         if ($this->isCurrentCurrencyAllowed() && (
-            ($type === self::TYPE_PRODUCT && $this->getShowInProductPage()) ||
-            ($type === self::TYPE_CART && $this->getShowInCartPage()) ||
-            ($type === self::TYPE_CHECKOUT && $this->getShowInCheckoutPage()) ||
-            ($type === self::TYPE_CATALOG && $this->getShowInCategoryPage())
-        )) {
+                ($type === self::TYPE_PRODUCT && $this->getShowInProductPage()) ||
+                ($type === self::TYPE_CART && $this->getShowInCartPage()) ||
+                ($type === self::TYPE_CHECKOUT && $this->getShowInCheckoutPage()) ||
+                ($type === self::TYPE_CATALOG && $this->getShowInCategoryPage())
+            )) {
             return $this->_layout
                 ->createBlock(Template::class)
-                ->setTemplate('PensoPay_Gateway::viabill/tag.phtml')
+                ->setTemplate('Pensopay_Gateway::viabill/tag.phtml')
                 ->setType($type)
                 ->setPrice($price)
                 ->setDynamicPriceSelector($dynamicPriceSelector)

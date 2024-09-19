@@ -1,6 +1,6 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Adminhtml\Auxiliary;
+namespace Pensopay\Gateway\Controller\Adminhtml\Auxiliary;
 
 use Magento\Backend\App\Action;
 

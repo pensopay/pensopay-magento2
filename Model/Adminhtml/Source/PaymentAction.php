@@ -1,12 +1,14 @@
 <?php
-namespace PensoPay\Gateway\Model\Adminhtml\Source;
 
+namespace Pensopay\Gateway\Model\Adminhtml\Source;
+
+use Magento\Framework\Option\ArrayInterface;
 use Magento\Payment\Model\Method\AbstractMethod;
 
 /**
  * Class PaymentAction
  */
-class PaymentAction implements \Magento\Framework\Option\ArrayInterface
+class PaymentAction implements ArrayInterface
 {
     /**
      * {@inheritdoc}

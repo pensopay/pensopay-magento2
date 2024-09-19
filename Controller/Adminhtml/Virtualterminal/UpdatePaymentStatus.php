@@ -1,6 +1,8 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Adminhtml\Virtualterminal;
+namespace Pensopay\Gateway\Controller\Adminhtml\Virtualterminal;
+
+use Exception;
 
 class UpdatePaymentStatus extends Generic
 {
@@ -13,7 +15,7 @@ class UpdatePaymentStatus extends Generic
                 $paymentModel->save();
                 $this->messageManager->addSuccessMessage(__('Payment updated successfully.'));
                 return $this->_redirect('*/*/edit', ['id' => $paymentModel->getId()]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $this->messageManager->addErrorMessage($e->getMessage());
                 return $this->_redirectToTerminal(); //go to terminal to avoid inf loop in extreme cases
             }

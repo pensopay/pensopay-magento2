@@ -1,6 +1,6 @@
 <?php
 
-namespace PensoPay\Gateway\Ui\Component\Virtualterminal\Grid\Column;
+namespace Pensopay\Gateway\Ui\Component\Virtualterminal\Grid\Column;
 
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
@@ -16,11 +16,12 @@ class Amount extends Column
      * @param array $data
      */
     public function __construct(
-        ContextInterface $context,
+        ContextInterface   $context,
         UiComponentFactory $uiComponentFactory,
-        array $components = [],
-        array $data = []
-    ) {
+        array              $components = [],
+        array              $data = []
+    )
+    {
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 

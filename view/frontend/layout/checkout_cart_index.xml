@@ -1,8 +1,10 @@
 <?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceContainer name="checkout.cart.totals.container">
-            <block class="Magento\Framework\View\Element\Template" template="PensoPay_Gateway::viabill/cart/totals.phtml" name="viabill-cart"/>
+            <block class="Magento\Framework\View\Element\Template"
+                   template="Pensopay_Gateway::viabill/cart/totals.phtml" name="pensopay-viabill-cart"/>
         </referenceContainer>
     </body>
 </page>

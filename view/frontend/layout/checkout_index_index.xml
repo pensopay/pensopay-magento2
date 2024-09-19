@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="checkout.root">
             <arguments>
@@ -17,32 +18,52 @@
                                                         <item name="renders" xsi:type="array">
                                                             <!-- merge payment method renders here -->
                                                             <item name="children" xsi:type="array">
-                                                                <item name="pensopay" xsi:type="array">
-                                                                    <item name="component" xsi:type="string">PensoPay_Gateway/js/view/payment/pensopay</item>
+                                                                <item name="pensopay_gateway" xsi:type="array">
+                                                                    <item name="component" xsi:type="string">
+                                                                        Pensopay_Gateway/js/view/payment/pensopay
+                                                                    </item>
                                                                     <item name="methods" xsi:type="array">
-                                                                        <item name="pensopay" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="pensopay_gateway" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
-                                                                        <item name="pensopay_viabill" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="pensopay_gateway_viabill" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
-                                                                        <item name="pensopay_anyday" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="pensopay_gateway_anyday" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
-                                                                        <item name="pensopay_mobilepay" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="pensopay_gateway_mobilepay"
+                                                                              xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
-                                                                        <item name="pensopay_dankort" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="pensopay_gateway_dankort" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
-                                                                        <item name="pensopay_klarnapayments" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="pensopay_gateway_klarnapayments"
+                                                                              xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
-                                                                        <item name="pensopay_paypal" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="pensopay_gateway_paypal" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
-                                                                        <item name="pensopay_vipps" xsi:type="array">
-                                                                            <item name="isBillingAddressRequired" xsi:type="boolean">true</item>
+                                                                        <item name="pensopay_gateway_vipps" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
                                                                         </item>
                                                                     </item>
                                                                 </item>
@@ -61,8 +82,10 @@
             </arguments>
         </referenceBlock>
         <referenceContainer name="before.body.end">
-            <block class="Magento\Framework\View\Element\Template" template="PensoPay_Gateway::viabill/checkout.phtml" name="viabill-cart"/>
-            <block class="Magento\Framework\View\Element\Template" template="PensoPay_Gateway::checkout/logos.phtml" name="checkout-logos"/>
+            <block class="Magento\Framework\View\Element\Template" template="Pensopay_Gateway::viabill/checkout.phtml"
+                   name="pensopay-viabill-cart"/>
+            <block class="Magento\Framework\View\Element\Template" template="Pensopay_Gateway::checkout/logos.phtml"
+                   name="pensopay-checkout-logos"/>
         </referenceContainer>
     </body>
 </page>

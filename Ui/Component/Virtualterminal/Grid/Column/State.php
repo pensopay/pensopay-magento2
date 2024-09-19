@@ -1,18 +1,19 @@
 <?php
 
-namespace PensoPay\Gateway\Ui\Component\Virtualterminal\Grid\Column;
+namespace Pensopay\Gateway\Ui\Component\Virtualterminal\Grid\Column;
 
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
+use Pensopay\Gateway\Helper\Data;
+use Pensopay\Gateway\Model\Payment;
+use Pensopay\Gateway\Model\PaymentFactory;
 
 class State extends Column
 {
-    /** @var \PensoPay\Gateway\Model\PaymentFactory $_paymentFactory */
-    protected $_paymentFactory;
+    protected PaymentFactory $_paymentFactory;
 
-    /** @var \PensoPay\Gateway\Helper\Data $_pensoPayHelper */
-    protected $_pensoPayHelper;
+    protected Data $_pensoPayHelper;
 
     /**
      * Batch constructor.
@@ -22,13 +23,14 @@ class State extends Column
      * @param array $data
      */
     public function __construct(
-        ContextInterface $context,
+        ContextInterface   $context,
         UiComponentFactory $uiComponentFactory,
-        \PensoPay\Gateway\Model\PaymentFactory $paymentFactory,
-        \PensoPay\Gateway\Helper\Data $pensoPayHelper,
-        array $components = [],
-        array $data = []
-    ) {
+        PaymentFactory     $paymentFactory,
+        Data               $pensoPayHelper,
+        array              $components = [],
+        array              $data = []
+    )
+    {
         parent::__construct($context, $uiComponentFactory, $components, $data);
         $this->_paymentFactory = $paymentFactory;
         $this->_pensoPayHelper = $pensoPayHelper;
@@ -38,7 +40,7 @@ class State extends Column
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as &$item) {
-                /** @var \PensoPay\Gateway\Model\Payment $payment */
+                /** @var Payment $payment */
                 $payment = $this->_paymentFactory->create();
                 $payment->addData($item);
                 $item[$this->getData('name')] = "<span class=\"{$this->_pensoPayHelper->getStatusColorCode($payment->getLastCode())}\"><span>{$payment->getDisplayStatus()}</span></span>";

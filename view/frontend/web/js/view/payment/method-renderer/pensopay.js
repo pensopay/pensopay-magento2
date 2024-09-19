@@ -1,14 +1,14 @@
 define(
     [
         'Magento_Checkout/js/view/payment/default',
-        'PensoPay_Gateway/js/action/redirect-on-success',
+        'Pensopay_Gateway/js/action/redirect-on-success',
         'jquery'
     ],
     function (Component, pensopayRedirect, $) {
         'use strict';
         return Component.extend({
             defaults: {
-                template: 'PensoPay_Gateway/payment/form',
+                template: 'Pensopay_Gateway/payment/form',
                 paymentReady: false
             },
             redirectAfterPlaceOrder: false,
@@ -30,18 +30,18 @@ define(
                 return this.paymentReady();
             },
 
-            getCode: function() {
+            getCode: function () {
                 return 'pensopay';
             },
-            getData: function() {
+            getData: function () {
                 return {
                     'method': this.item.method,
                 };
             },
-            afterPlaceOrder: function() {
+            afterPlaceOrder: function () {
                 pensopayRedirect.execute(this.getCode());
             },
-            getPaymentMethodExtra: function() {
+            getPaymentMethodExtra: function () {
                 return $('.checkout-pensopay-logos').html();
             }
         });

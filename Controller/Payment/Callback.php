@@ -1,75 +1,69 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Payment;
+namespace Pensopay\Gateway\Controller\Payment;
 
+use Exception;
+use Magento\Catalog\Model\Product\Type;
+use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\App\Request\InvalidRequestException;
-use Magento\Framework\App\RequestInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
-use PensoPay\Gateway\Helper\Data;
-use PensoPay\Gateway\Model\Payment;
-use PensoPay\Gateway\Model\PaymentFactory;
+use Magento\Sales\Model\Order\Item;
+use Pensopay\Gateway\Helper\Data;
+use Pensopay\Gateway\Model\Payment;
+use Pensopay\Gateway\Model\PaymentFactory;
 use Psr\Log\LoggerInterface;
 
 class Callback extends Action
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
+    protected LoggerInterface $logger;
 
-    /**
-     * @var ScopeConfigInterface
-     */
-    protected $scopeConfig;
+    protected ScopeConfigInterface $scopeConfig;
 
-    /**
-     * @var OrderInterface
-     */
-    protected $order;
+    protected OrderInterface $order;
 
-    /**
-     * @var OrderSender
-     */
-    protected $orderSender;
+    protected OrderSender $orderSender;
 
-    /** @var Data $_pensoPayHelper */
-    protected $_pensoPayHelper;
+    protected Data $_pensoPayHelper;
 
-    protected $_pensoPaymentFactory;
+    protected PaymentFactory $_pensoPaymentFactory;
+
+    protected Session $_checkoutSession;
 
     public function __construct(
-        Context $context,
-        LoggerInterface $logger,
+        Context              $context,
+        LoggerInterface      $logger,
         ScopeConfigInterface $scopeConfig,
-        OrderInterface $order,
-        OrderSender $orderSender,
-        Data $pensoPayHelper,
-        PaymentFactory $paymentFactory
-    ) {
+        OrderInterface       $order,
+        OrderSender          $orderSender,
+        Data                 $pensoPayHelper,
+        PaymentFactory       $paymentFactory,
+        Session              $checkoutSession
+    )
+    {
         $this->scopeConfig = $scopeConfig;
         $this->logger = $logger;
         $this->order = $order;
         $this->orderSender = $orderSender;
         $this->_pensoPayHelper = $pensoPayHelper;
         $this->_pensoPaymentFactory = $paymentFactory;
+        $this->_checkoutSession = $checkoutSession;
         parent::__construct($context);
     }
 
     /**
-     * @return \Magento\Checkout\Model\Session
+     * @return Session
      */
     protected function _getCheckout()
     {
-        return $this->_objectManager->get('Magento\Checkout\Model\Session');
+        return $this->_checkoutSession;
     }
 
     /**
-     * Handle callback from PensoPay
+     * Handle callback from pensopay
      *
      * @return string
      */
@@ -133,19 +127,47 @@ class Callback extends Action
                         }
                     }
 
+                    //Add transaction fee if set
+                    if ($response->fee > 0 && false) {
+                        $fee = $response->fee / 100;
+                        $currentFee = $order->getData('card_surcharge');
+                        $calculatedFee = $fee;
+                        if ($currentFee > 0) {
+                            $order->setData('card_surcharge', $fee);
+                            $order->setData('base_card_surcharge', $fee);
+                            $calculatedFee = -$currentFee + $fee;
+                        } else {
+                            $order->setData('card_surcharge', $fee);
+                            $order->setData('base_card_surcharge', $fee);
+                        }
+
+                        $order->setGrandTotal($order->getGrandTotal() + $calculatedFee);
+                        $order->setBaseGrandTotal($order->getBaseGrandTotal() + $calculatedFee);
+
+                        $quoteId = $order->getQuoteId();
+                        if ($quoteId) {
+                            /**
+                             * Not business critical, don't want to stop
+                             * Basically adds support for most order editors.
+                             */
+                            try {
+                                $quote = $this->_quoteRepository->get($quoteId);
+                                if ($quote->getId()) {
+                                    $quote->setData('card_surcharge', $fee);
+                                    $quote->setData('base_card_surcharge', $fee);
+                                    $quote->setGrandTotal($quote->getGrandTotal() + $calculatedFee);
+                                    $quote->setBaseGrandTotal($quote->getBaseGrandTotal() + $calculatedFee);
+                                    $this->_quoteRepository->save($quote);
+                                }
+                            } catch (\Exception $e) {}
+                        }
+                    }
+
                     /** @var Payment $pensoPayment */
                     $pensoPayment = $this->_pensoPaymentFactory->create();
                     $pensoPayment->load($order->getIncrementId(), 'order_id');
                     $pensoPayment->importFromRemotePayment(json_decode($body, true));
                     $pensoPayment->save();
-
-                    //Set order to processing
-                    $stateProcessing = Order::STATE_PROCESSING;
-                    if ($order->getState() !== $stateProcessing) {
-                        $order->setState($stateProcessing)
-                            ->setStatus($order->getConfig()->getStateDefaultStatus($stateProcessing))
-                            ->save();
-                    }
 
                     $this->_pensoPayHelper->setNewOrderStatus($order);
                     $order->save();
@@ -159,78 +181,9 @@ class Callback extends Action
                 $this->logger->debug('Checksum mismatch');
                 return;
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
         }
-    }
-
-    /**
-     * Add transaction fee as virtual product
-     *
-     * @param Order $order
-     * @param $fee
-     */
-    private function addTransactionFee(Order $order, $fee)
-    {
-        try {
-            foreach ($order->getAllItems() as $orderItem) {
-                if ($orderItem->getSku() === Data::TRANSACTION_FEE_SKU) {
-                    return;
-                }
-            }
-
-            /** @var \Magento\Sales\Model\Order\Item $item */
-            $item = $this->_objectManager->create(\Magento\Sales\Model\Order\Item::class);
-            $item->setSku(Data::TRANSACTION_FEE_SKU);
-
-            //Calculate fee price
-            $feeBase = (float)$fee / 100;
-            $feeTotal = $order->getStore()->getBaseCurrency()->convert($feeBase, $order->getOrderCurrencyCode());
-
-            $name = $this->_pensoPayHelper->getTransactionFeeLabel();
-            $item->setName($name);
-            $item->setBaseCost($feeBase);
-            $item->setBasePrice($feeBase);
-            $item->setBasePriceInclTax($feeBase);
-            $item->setBaseOriginalPrice($feeBase);
-            $item->setBaseRowTotal($feeBase);
-            $item->setBaseRowTotalInclTax($feeBase);
-            $item->setCost($feeTotal);
-            $item->setPrice($feeTotal);
-            $item->setPriceInclTax($feeTotal);
-            $item->setOriginalPrice($feeTotal);
-            $item->setRowTotal($feeTotal);
-            $item->setRowTotalInclTax($feeTotal);
-            $item->setProductType(\Magento\Catalog\Model\Product\Type::TYPE_VIRTUAL);
-            $item->setIsVirtual(1);
-            $item->setQtyOrdered(1);
-            $item->setStoreId($order->getStoreId());
-            $item->setOrderId($order->getId());
-
-            $order->addItem($item);
-
-            $order = $this->updateTotals($order, $feeBase, $feeTotal);
-            $order->save();
-        } catch (\Exception $e) {
-            $this->logger->critical($e->getMessage());
-        }
-    }
-
-    /**
-     * Update order totals after adding transaction fee
-     *
-     * @param Order $order
-     * @param $feeBase
-     * @param $feeTotal
-     */
-    private function updateTotals($order, $feeBase, $feeTotal)
-    {
-        $order->setBaseGrandTotal($order->getBaseGrandTotal() + $feeBase);
-        $order->setBaseSubtotal($order->getBaseSubtotal() + $feeBase);
-        $order->setGrandTotal($order->getGrandTotal() + $feeTotal);
-        $order->setSubtotal($order->getSubtotal() + $feeTotal);
-
-        return $order;
     }
 
     /**
@@ -245,7 +198,7 @@ class Callback extends Action
             $order->addStatusHistoryComment(__('Order confirmation email sent to customer'))
                 ->setIsCustomerNotified(true)
                 ->save();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $order->addStatusHistoryComment(__('Failed to send order confirmation email: %s', $e->getMessage()))
                 ->setIsCustomerNotified(false)
                 ->save();

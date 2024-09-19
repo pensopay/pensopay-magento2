@@ -1,28 +1,28 @@
 <?php
 
-namespace PensoPay\Gateway\Model;
+namespace Pensopay\Gateway\Model;
 
+use Exception;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Data\Collection\AbstractDb;
 use Magento\Framework\Model\AbstractModel;
 use Magento\Framework\Model\Context;
 use Magento\Framework\Model\ResourceModel\AbstractResource;
 use Magento\Framework\Registry;
-use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderRepository;
-use PensoPay\Gateway\Helper\Checkout as PensoPayCheckoutHelper;
-use PensoPay\Gateway\Helper\Data as PensoPayDataHelper;
-use PensoPay\Gateway\Model\Adapter\PensoPayAdapter;
+use Pensopay\Gateway\Helper\Checkout as PensopayCheckoutHelper;
+use Pensopay\Gateway\Helper\Data as PensopayDataHelper;
+use Pensopay\Gateway\Model\Adapter\PensopayAdapter;
 
 class Payment extends AbstractModel
 {
     const PAYMENT_TABLE = 'pensopay_payment';
 
-    protected PensoPayCheckoutHelper $_helper;
-    protected PensoPayDataHelper $_pensoPayHelper;
+    protected PensopayCheckoutHelper $_helper;
+    protected PensopayDataHelper $_pensoPayHelper;
     protected OrderRepository $_orderRepository;
     protected SearchCriteriaBuilder $_searchCriteriaBuilder;
-    protected PensoPayAdapter $_paymentAdapter;
+    protected PensopayAdapter $_paymentAdapter;
 
     const STATE_PENDING = 'pending';
     const STATE_AUTHORIZED = 'authorized';
@@ -44,11 +44,11 @@ class Payment extends AbstractModel
     public function __construct(
         Context                $context,
         Registry               $registry,
-        PensoPayCheckoutHelper $checkoutHelper,
-        PensoPayDataHelper     $pensoPayDataHelper,
+        PensopayCheckoutHelper $checkoutHelper,
+        PensopayDataHelper     $pensoPayDataHelper,
         OrderRepository        $orderRepository,
         SearchCriteriaBuilder  $searchCriteriaBuilder,
-        PensoPayAdapter        $paymentAdapter,
+        PensopayAdapter        $paymentAdapter,
         AbstractResource       $resource = null,
         AbstractDb             $resourceCollection = null,
         array                  $data = []
@@ -126,16 +126,16 @@ class Payment extends AbstractModel
     /**
      * Updates payment data from remote gateway.
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function updatePaymentRemote()
     {
         if (!$this->getId()) {
-            throw new \Exception(__('Payment not loaded.'));
+            throw new Exception(__('Payment not loaded.'));
         }
 
         if (!$this->getReferenceId()) {
-            throw new \Exception(__('Reference id not found.'));
+            throw new Exception(__('Reference id not found.'));
         }
 
         $orderIncrement = $this->getOrderId();

@@ -1,18 +1,15 @@
 <?php
 
-namespace PensoPay\Gateway\Ui\Component\Virtualterminal\Grid\Column;
+namespace Pensopay\Gateway\Ui\Component\Virtualterminal\Grid\Column;
 
+use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
-use Magento\Framework\UrlInterface;
 
 class Paymentlink extends Column
 {
-    /**
-     * @var UrlInterface
-     */
-    protected $urlBuilder;
+    protected UrlInterface $urlBuilder;
 
     /**
      * Batch constructor.
@@ -23,15 +20,17 @@ class Paymentlink extends Column
      * @param array $data
      */
     public function __construct(
-        ContextInterface $context,
+        ContextInterface   $context,
         UiComponentFactory $uiComponentFactory,
-        UrlInterface $urlBuilder,
-        array $components = [],
-        array $data = []
-    ) {
+        UrlInterface       $urlBuilder,
+        array              $components = [],
+        array              $data = []
+    )
+    {
         $this->urlBuilder = $urlBuilder;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
+
     public function prepareDataSource(array $dataSource)
     {
         if (isset($dataSource['data']['items'])) {

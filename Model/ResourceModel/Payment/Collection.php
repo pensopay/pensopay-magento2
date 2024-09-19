@@ -1,10 +1,10 @@
 <?php
 
-namespace PensoPay\Gateway\Model\ResourceModel\Payment;
+namespace Pensopay\Gateway\Model\ResourceModel\Payment;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use PensoPay\Gateway\Model\Payment;
-use PensoPay\Gateway\Model\ResourceModel\Payment as PaymentResource;
+use Pensopay\Gateway\Model\Payment;
+use Pensopay\Gateway\Model\ResourceModel\Payment as PaymentResource;
 
 class Collection extends AbstractCollection
 {

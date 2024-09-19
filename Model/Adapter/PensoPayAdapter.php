@@ -1,69 +1,84 @@
 <?php
 
-namespace PensoPay\Gateway\Model\Adapter;
+namespace Pensopay\Gateway\Model\Adapter;
 
+use Exception;
+use GuzzleHttp\Client;
 use Magento\Backend\Model\UrlInterface as BackendUrlInterface;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Encryption\EncryptorInterface;
+use Magento\Framework\Event\ManagerInterface as EventManager;
 use Magento\Framework\Locale\ResolverInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
-use Magento\Sales\Model\Order\Item;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
-use Magento\Test\Di\WrappedClass\Logger;
-use PensoPay\Client\Model\PaymentCapturePaymentRequest;
-use PensoPay\Client\Model\PaymentRefundPaymentRequest;
-use PensoPay\Gateway\Helper\Checkout as PensoPayHelperCheckout;
-use PensoPay\Gateway\Helper\Data as PensoPayHelperData;
-use PensoPay\Gateway\Model\Payment;
-use PensoPay\Gateway\Model\PaymentFactory;
-use PensoPay\Gateway\Model\Ui\Method\AnydayConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\ViabillConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\SwishConfigProvider;
-use PensoPay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
-use Magento\Framework\Event\ManagerInterface as EventManager;
-
-use Pensopay\Client\Api\PaymentsApi as PensoPayClient;
+use Pensopay\Client\Api\PaymentsApi;
+use Pensopay\Client\Configuration;
+use Pensopay\Client\Model\PaymentCapturePaymentRequest;
+use Pensopay\Client\Model\PaymentCreatePaymentRequest;
+use Pensopay\Client\Model\PaymentRefundPaymentRequest;
+use Pensopay\Gateway\Helper\Checkout as PensopayHelperCheckout;
+use Pensopay\Gateway\Helper\Data as PensopayHelperData;
+use Pensopay\Gateway\Model\Payment;
+use Pensopay\Gateway\Model\PaymentFactory;
+use Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Intl\Countries;
 
-class PensoPayAdapter
+class PensopayAdapter
 {
     protected LoggerInterface $logger;
+
     protected UrlInterface $url;
-    protected PensoPayHelperData $helper;
+
+    protected PensopayHelperData $helper;
+
     protected ResolverInterface $resolver;
+
     protected ScopeConfigInterface $scopeConfig;
+
     protected OrderRepositoryInterface $orderRepository;
+
     protected $_client;
-    protected PensoPayHelperCheckout $_checkoutHelper;
+
+    protected PensopayHelperCheckout $_checkoutHelper;
+
     protected PaymentFactory $_paymentFactory;
+
     protected StoreManagerInterface $_storeManager;
+
     protected ?StoreInterface $_frontStore = null;
-    protected PensoPayHelperData $_pensoHelper;
+
+    protected PensopayHelperData $_pensoHelper;
+
     protected EncryptorInterface $_encryptor;
+
     protected EventManager $_eventManager;
 
 
     public function __construct(
-        LoggerInterface $logger,
-        UrlInterface $url,
-        PensoPayHelperData $helper,
-        ScopeConfigInterface $scopeConfig,
-        ResolverInterface $resolver,
+        LoggerInterface          $logger,
+        UrlInterface             $url,
+        PensopayHelperData       $helper,
+        ScopeConfigInterface     $scopeConfig,
+        ResolverInterface        $resolver,
         OrderRepositoryInterface $orderRepository,
-        PensoPayHelperCheckout $checkoutHelper,
-        PaymentFactory $paymentFactory,
-        StoreManagerInterface $storeManager,
-        PensoPayHelperData $pensoHelper,
-        EncryptorInterface $encryptor,
-        EventManager $eventManager
-    ) {
+        PensopayHelperCheckout   $checkoutHelper,
+        PaymentFactory           $paymentFactory,
+        StoreManagerInterface    $storeManager,
+        PensopayHelperData       $pensoHelper,
+        EncryptorInterface       $encryptor,
+        EventManager             $eventManager
+    )
+    {
         $this->logger = $logger;
         $this->url = $url;
         $this->helper = $helper;
@@ -77,7 +92,7 @@ class PensoPayAdapter
         $this->_encryptor = $encryptor;
         $this->_eventManager = $eventManager;
 
-        $this->_client = new \PensoPay\Client\Api\PaymentsApi(new \GuzzleHttp\Client(), $this->getClientConfiguration(null));
+        $this->_client = new PaymentsApi(new Client(), $this->getClientConfiguration(null));
     }
 
     /**
@@ -115,15 +130,15 @@ class PensoPayAdapter
     public function authorizeAndCreatePaymentLink(array $attributes, $autoSave = true)
     {
         try {
-            $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+            $isVirtualTerminal = isset($attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL];
             $paymentData = $this->_setupRequest($attributes);
 
             try {
-                $requestPayload = new \PensoPay\Client\Model\PaymentCreatePaymentRequest($paymentData);
+                $requestPayload = new PaymentCreatePaymentRequest($paymentData);
                 $result = $this->_client->createPayment($requestPayload);
                 $paymentArray = json_decode((string)$result, true);
             } catch (Exception $e) {
-                echo 'Exception when calling PaymentsApi->createPayment: ', $e->getMessage(), PHP_EOL;
+                throw new Exception('Exception when calling PaymentsApi->createPayment: ' . $e->getMessage());
             }
 
             $paymentId = $paymentArray['id'];
@@ -137,7 +152,7 @@ class PensoPayAdapter
 //            }
 
             return $paymentArray;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
         }
 
@@ -146,7 +161,7 @@ class PensoPayAdapter
 
     protected function _setExtraVirtualTerminalData($attributes, &$paymentArray)
     {
-        $paymentArray[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL] = true;
+        $paymentArray[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL] = true;
         $paymentArray['customer_name'] = $attributes['CUSTOMER_NAME'];
         $paymentArray['customer_email'] = $attributes['CUSTOMER_EMAIL'];
         $paymentArray['customer_street'] = $attributes['CUSTOMER_STREET'];
@@ -161,12 +176,12 @@ class PensoPayAdapter
             'order_id' => $attributes['INCREMENT_ID'],
             'currency' => $attributes['CURRENCY'],
             'amount' => $attributes['AMOUNT'],
-            'callback_url' => 'https://2706-93-176-77-122.ngrok-free.app/pensopay/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
+            'callback_url' => 'https://' . '6db2-93-176-77-122.ngrok-free.app' . '/pensopay/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
 //            'callback_url' => $this->getFrontUrl('pensopay/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
             'testmode' => $this->helper->getIsTestMode(),
         ];
 
-        $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+        $isVirtualTerminal = isset($attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL];
         if (!$isVirtualTerminal) {
             $paymentData['autocapture'] = $this->helper->getIsAutocapture();
             $paymentData['success_url'] = $this->getFrontUrl('pensopay/payment/returnAction', ['_query' => ['ori' => $this->_encryptor->encrypt($attributes['INCREMENT_ID'])]]);
@@ -176,7 +191,7 @@ class PensoPayAdapter
         }
 
         $orderData = [];
-        $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+        $isVirtualTerminal = isset($attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL];
         if (!$isVirtualTerminal) {
             $order = $this->orderRepository->get($attributes['ORDER_ID']);
 
@@ -232,12 +247,12 @@ class PensoPayAdapter
             $attributes['PAYMENT_METHOD'] = $order->getPayment()->getMethod();
 
 //            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
-                $orderData['shipping'] = [
+            $orderData['shipping'] = [
 //                    'amount' => $order->getBaseShippingInclTax() * 100,
-                    'method' => $order->getShippingMethod(),
-                    'company' => $order->getShippingDescription(),
-                    'vat_rate' => 100 / ($order->getBaseShippingAmount() / (($order->getBaseShippingInclTax() - $order->getBaseShippingAmount()) ?: 1))
-                ];
+                'method' => $order->getShippingMethod(),
+                'company' => $order->getShippingDescription(),
+                'vat_rate' => 100 / ($order->getBaseShippingAmount() / (($order->getBaseShippingInclTax() - $order->getBaseShippingAmount()) ?: 1))
+            ];
 //            }
 
             //Build basket array
@@ -270,11 +285,11 @@ class PensoPayAdapter
             $paymentData['methods'][] = 'card';
             $orderData['basket'] = [
                 [
-                    'qty'        => 1,
-                    'name'       => 'VirtualTerminal Payment',
-                    'sku'        => 'virtualterminal',
-                    'price'      => $attributes['AMOUNT'],
-                    'vat_rate'   => 25, //TODO
+                    'qty' => 1,
+                    'name' => 'VirtualTerminal Payment',
+                    'sku' => 'virtualterminal',
+                    'price' => $attributes['AMOUNT'],
+                    'vat_rate' => 25, //TODO
                 ]
             ];
             $orderData['shipping_address'] = [];
@@ -298,7 +313,7 @@ class PensoPayAdapter
 //        try {
 //            $form = $this->_setupRequest($attributes);
 //
-//            $isVirtualTerminal = isset($attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL];
+//            $isVirtualTerminal = isset($attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL];
 //            if ($isVirtualTerminal) {
 //                $form['id'] = $attributes['ORDER_ID'];
 //            }
@@ -357,7 +372,7 @@ class PensoPayAdapter
             $requestPayload = new PaymentCapturePaymentRequest([$amount]);
             $result = $this->_client->capturePayment($id, $requestPayload);
             return json_decode((string)$result, true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
         }
 
@@ -369,7 +384,7 @@ class PensoPayAdapter
      *
      * @param $paymentId
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
     public function getPayment($paymentId)
     {
@@ -377,7 +392,7 @@ class PensoPayAdapter
 
         try {
             return json_decode((string)$this->_client->getPayment($paymentId), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
             throw $e;
         }
@@ -394,12 +409,12 @@ class PensoPayAdapter
 
     protected function getClientConfiguration($storeId = null)
     {
-        return \PensoPay\Client\Configuration::getDefaultConfiguration()->setAccessToken($this->getApiKey($storeId));
+        return Configuration::getDefaultConfiguration()->setAccessToken($this->getApiKey($storeId));
     }
 
     public function setTransactionStore($storeId)
     {
-        $this->_client = new \PensoPay\Client\Api\PaymentsApi(new \GuzzleHttp\Client(), $this->getClientConfiguration($storeId));
+        $this->_client = new PaymentsApi(new Client(), $this->getClientConfiguration($storeId));
     }
 
     /**
@@ -417,7 +432,7 @@ class PensoPayAdapter
             $id = $attributes['TXN_ID'];
 
             return json_decode((string)$this->_client->cancelPayment($id), true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
         }
 
@@ -442,7 +457,7 @@ class PensoPayAdapter
             $requestPayload = new PaymentRefundPaymentRequest([$amount]);
             $result = $this->_client->refundPayment($id, $requestPayload);
             return json_decode((string)$result, true);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->critical($e->getMessage());
         }
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace PensoPay\Gateway\Plugin\Framework\App\Request;
+namespace Pensopay\Gateway\Plugin\Framework\App\Request;
 
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
-use PensoPay\Gateway\Controller\Payment\Callback;
+use Pensopay\Gateway\Controller\Payment\Callback;
 
 class CsrfValidator
 {

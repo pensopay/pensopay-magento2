@@ -1,6 +1,6 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Adminhtml\Virtualterminal;
+namespace Pensopay\Gateway\Controller\Adminhtml\Virtualterminal;
 
 class CapturePayment extends Generic
 {

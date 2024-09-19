@@ -1,18 +1,19 @@
 <?php
 
-namespace PensoPay\Gateway\Plugin\Framework\Pricing;
+namespace Pensopay\Gateway\Plugin\Framework\Pricing;
 
+use Closure;
 use Magento\Bundle\Model\Product\Type as BundleProduct;
 use Magento\Catalog\Model\Product;
 use Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 use Magento\GroupedProduct\Model\Product\Type\Grouped;
-use PensoPay\Gateway\Helper\Viabill;
+use Pensopay\Gateway\Helper\Viabill;
 
 /**
  * Class Render
  * This class is safe to preference in order to implement your own viabill rendering logic.
  * This is the logic for product renders (list - any type, product page)
- * @package PensoPay\Gateway\Plugin\Framework\Pricing
+ * @package Pensopay\Gateway\Plugin\Framework\Pricing
  */
 class Render
 {
@@ -28,7 +29,7 @@ class Render
 
     public function aroundRender(
         $subject,
-        \Closure $proceed,
+        Closure $proceed,
         $priceCode,
         $saleableItem,
         $arguments = []

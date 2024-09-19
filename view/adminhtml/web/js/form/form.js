@@ -272,22 +272,22 @@ define([
             }
         },
 
-        _removeCustomerEmailLabel: function() {
+        _removeCustomerEmailLabel: function () {
             var $emailField = this.$('input[name="customer_email"]');
             var $ = this.$;
             var vanillaEmailField = $emailField[0];
             var label = this.$('label[for="' + vanillaEmailField.id + '"]');
-            label.each(function(c, item) {
-               if ($(item).hasClass('admin__field-error')) {
-                   item.remove();
-               }
+            label.each(function (c, item) {
+                if ($(item).hasClass('admin__field-error')) {
+                    item.remove();
+                }
             });
         },
 
-        _validateMandatoryCustomer: function() {
+        _validateMandatoryCustomer: function () {
             var $emailField = this.$('input[name="customer_email"]');
             var vanillaEmailField = $emailField[0];
-            var result = this.uiValidator({'validate-email':true, 'required-entry':true}, $emailField.val());
+            var result = this.uiValidator({'validate-email': true, 'required-entry': true}, $emailField.val());
 
             this._removeCustomerEmailLabel();
             if (result.passed) {

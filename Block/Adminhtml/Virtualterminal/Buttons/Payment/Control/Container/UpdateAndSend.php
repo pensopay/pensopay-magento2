@@ -1,8 +1,8 @@
 <?php
 
-namespace PensoPay\Gateway\Block\Adminhtml\Virtualterminal\Buttons\Payment\Control\Container;
+namespace Pensopay\Gateway\Block\Adminhtml\Virtualterminal\Buttons\Payment\Control\Container;
 
-use PensoPay\Gateway\Model\Payment;
+use Pensopay\Gateway\Model\Payment;
 
 class UpdateAndSend extends Generic
 {
@@ -11,7 +11,7 @@ class UpdateAndSend extends Generic
      */
     public function getButtonData()
     {
-        if ($this->hasPayment() && $this->getPayment()->getState() === Payment::STATE_INITIAL) {
+        if ($this->hasPayment() && $this->getPayment()->getState() === Payment::STATE_PENDING) {
             return [
                 'label' => __('Update and Send'),
                 'class' => 'save primary',

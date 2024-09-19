@@ -1,43 +1,28 @@
 <?php
 
-namespace PensoPay\Gateway\Block\Adminhtml\Virtualterminal\Buttons\Payment\Control\Container;
+namespace Pensopay\Gateway\Block\Adminhtml\Virtualterminal\Buttons\Payment\Control\Container;
 
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\UiComponent\Context;
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
+use Pensopay\Gateway\Model\Payment;
+use Pensopay\Gateway\Model\PaymentFactory;
 
 class Generic implements ButtonProviderInterface
 {
-    /**
-     * Url Builder
-     *
-     * @var Context
-     */
-    protected $context;
+    protected Context $context;
 
-    /**
-     * Registry
-     *
-     * @var Registry
-     */
-    protected $registry;
+    protected Registry $registry;
 
-    /** @var \PensoPay\Gateway\Model\PaymentFactory $_paymentFactory */
-    protected $_paymentFactory;
+    protected PaymentFactory $_paymentFactory;
 
-    /** @var \PensoPay\Gateway\Model\Payment $_payment */
-    protected $_payment;
+    protected Payment $_payment;
 
-    /**
-     * Generic constructor
-     *
-     * @param Context $context
-     * @param Registry $registry
-     */
     public function __construct(
-        Context $context,
-        \PensoPay\Gateway\Model\PaymentFactory $_paymentFactory
-    ) {
+        Context                                $context,
+        PaymentFactory $_paymentFactory
+    )
+    {
         $this->context = $context;
         $this->_paymentFactory = $_paymentFactory;
     }

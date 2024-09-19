@@ -1,8 +1,10 @@
 <?php
 
-    /** @var PensoPay\Gateway\Helper\Viabill $viabillHelper */
-    $viabillHelper = $this->helper('PensoPay\Gateway\Helper\Viabill');
-    $checkoutHelper = $this->helper('Magento\Checkout\Helper\Cart');
+use Magento\Checkout\Helper\Cart;
+use Pensopay\Gateway\Helper\Viabill;
+
+$viabillHelper = $this->helper(Viabill::class);
+$checkoutHelper = $this->helper(Cart::class);
 ?>
 
 <?= $viabillHelper->renderViabillPrice('basket', round($checkoutHelper->getQuote()->getGrandTotal(), 2)) ?>

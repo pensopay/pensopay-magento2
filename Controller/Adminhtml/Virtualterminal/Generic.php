@@ -1,61 +1,55 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Adminhtml\Virtualterminal;
+namespace Pensopay\Gateway\Controller\Adminhtml\Virtualterminal;
 
+use Exception;
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\View\Result\PageFactory;
-use PensoPay\Gateway\Helper\Checkout as PensoPayHelperCheckout;
-use PensoPay\Gateway\Helper\Data as PensoPayHelper;
-use PensoPay\Gateway\Model\Adapter\PensoPayAdapter;
-use PensoPay\Gateway\Model\Payment;
-use PensoPay\Gateway\Model\PaymentFactory;
-use PensoPay\Gateway\Model\ResourceModel\Payment\Collection;
-use PensoPay\Gateway\Model\ResourceModel\Payment\CollectionFactory;
+use Pensopay\Gateway\Helper\Checkout as PensopayHelperCheckout;
+use Pensopay\Gateway\Helper\Data as PensopayHelper;
+use Pensopay\Gateway\Model\Adapter\PensopayAdapter;
+use Pensopay\Gateway\Model\Payment;
+use Pensopay\Gateway\Model\PaymentFactory;
+use Pensopay\Gateway\Model\ResourceModel\Payment\Collection;
+use Pensopay\Gateway\Model\ResourceModel\Payment\CollectionFactory;
 
 class Generic extends Action
 {
-    /** @var Context $_context */
-    protected $_context;
+    protected Context $_context;
 
-    /** @var PageFactory $_resultPageFactory */
-    protected $_resultPageFactory;
+    protected PageFactory $_resultPageFactory;
 
-    /** @var PensoPayAdapter $_payAdapter */
-    protected $_payAdapter;
+    protected PensopayAdapter $_payAdapter;
 
-    /** @var PaymentFactory $_paymentFactory */
-    protected $_paymentFactory;
+    protected PaymentFactory $_paymentFactory;
 
-    /** @var Payment $_payment */
-    protected $_payment;
+    protected Payment $_payment;
 
-    /** @var CollectionFactory $_paymentCollectionFactory */
-    protected $_paymentCollectionFactory;
+    protected CollectionFactory $_paymentCollectionFactory;
 
-    /** @var PensoPayHelper $_pensoPayHelper */
-    protected $_pensoPayHelper;
+    protected PensopayHelper $_pensoPayHelper;
 
-    /** @var bool $_redirect */
     protected $_redirect = true;
 
     /**
      * Stores constructor.
      * @param Context $context
      * @param PageFactory $resultPageFactory
-     * @param PensoPayAdapter $payAdapter
+     * @param PensopayAdapter $payAdapter
      * @param PaymentFactory $paymentFactory
-     * @param PensoPayHelper $pensoPayHelper
+     * @param PensopayHelper $pensoPayHelper
      */
     public function __construct(
-        Context $context,
-        PageFactory $resultPageFactory,
-        PensoPayAdapter $payAdapter,
-        PaymentFactory $paymentFactory,
+        Context           $context,
+        PageFactory       $resultPageFactory,
+        PensopayAdapter   $payAdapter,
+        PaymentFactory    $paymentFactory,
         CollectionFactory $paymentCollectionFactory,
-        PensoPayHelper $pensoPayHelper
-    ) {
+        PensopayHelper    $pensoPayHelper
+    )
+    {
         parent::__construct($context);
         $this->_context = $context;
         $this->_resultPageFactory = $resultPageFactory;
@@ -104,7 +98,7 @@ class Generic extends Action
     private function _getPaymentAttributes($postData, $payment = null)
     {
         $attributes = [
-            PensoPayHelperCheckout::IS_VIRTUAL_TERMINAL => true,
+            PensopayHelperCheckout::IS_VIRTUAL_TERMINAL => true,
             'AMOUNT' => $postData['amount'] * 100,
             'CURRENCY' => $postData['currency'],
             'LANGUAGE' => $postData['locale_code'],
@@ -123,7 +117,7 @@ class Generic extends Action
             $attributes['INCREMENT_ID'] = $payment->getOrderId();
             $attributes['ORDER_ID'] = $payment->getReferenceId();
         } else {
-            $attributes['INCREMENT_ID'] =$postData['order_id'];
+            $attributes['INCREMENT_ID'] = $postData['order_id'];
             $attributes['ORDER_ID'] = $postData['order_id'];
         }
         return $attributes;
@@ -145,7 +139,7 @@ class Generic extends Action
         try {
             $payment = $this->_payAdapter->authorizeAndCreatePaymentLink($attributes);
             if ($payment === true) {
-                throw new \Exception(__('Error creating payment.'));
+                throw new Exception(__('Error creating payment.'));
             }
             $paymentLink = $payment['resource']['link'];
             $this->_getSession()->setPaymentLink($paymentLink);
@@ -157,7 +151,7 @@ class Generic extends Action
             if ($sendEmail) {
                 $this->_pensoPayHelper->sendEmail($postData['customer_email'], $postData['customer_name'] ?: '', $newPayment->getAmount(), $newPayment->getCurrency(), $paymentLink);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
         }
         return true;
@@ -189,7 +183,7 @@ class Generic extends Action
             $attributes['payment_id'] = $paymentModel->getId();
             $payment = $this->_payAdapter->updatePaymentAndPaymentLink($attributes);
             if ($payment === true) {
-                throw new \Exception(__('Error creating payment.'));
+                throw new Exception(__('Error creating payment.'));
             }
             $paymentLink = $payment['link'];
             $this->_getSession()->setPaymentLink($paymentLink);
@@ -198,7 +192,7 @@ class Generic extends Action
             if ($sendEmail) {
                 $this->_pensoPayHelper->sendEmail($postData['customer_email'], $postData['customer_name'] ?: '', $paymentModel->getAmount(), $paymentModel->getCurrency(), $paymentLink);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
         }
         return true;
@@ -230,7 +224,7 @@ class Generic extends Action
                             ));
                         }
                     }
-                    throw new \Exception('Validation error(s) occured.');
+                    throw new Exception('Validation error(s) occured.');
                 }
 
                 $this->getMessageManager()->addSuccessMessage(
@@ -238,7 +232,7 @@ class Generic extends Action
                 );
                 $paymentModel->importFromRemotePayment($payment);
                 $paymentModel->save();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 if ($this->_redirect) {
                     return $this->_redirectToTerminal($e->getMessage());
                 }
@@ -287,6 +281,6 @@ class Generic extends Action
 
     protected function _isAllowed()
     {
-        return $this->_authorization->isAllowed('PensoPay_Gateway::virtualterminal');
+        return $this->_authorization->isAllowed('Pensopay_Gateway::virtualterminal');
     }
 }

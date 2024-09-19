@@ -65,7 +65,7 @@ a.payment-link {
 }
 
 .pensopay-virtualterminal-edit table.operations tr:not(:first-child) {
-    margin-top:5px;
+    margin-top: 5px;
 }
 
 .pensopay-virtualterminal-edit table.operations tr,

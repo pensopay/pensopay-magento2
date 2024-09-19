@@ -1,9 +1,10 @@
 <?php
-namespace PensoPay\Gateway\Model\Ui\Method;
 
-use PensoPay\Gateway\Model\Ui\ConfigProvider;
+namespace Pensopay\Gateway\Model\Ui\Method;
 
-final class PensoPayConfigProvider extends ConfigProvider
+use Pensopay\Gateway\Model\Ui\ConfigProvider;
+
+final class PensopayConfigProvider extends ConfigProvider
 {
     const CODE = 'pensopay';
     protected string $_code = self::CODE;

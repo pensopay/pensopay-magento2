@@ -1,45 +1,42 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Payment;
+namespace Pensopay\Gateway\Controller\Payment;
 
+use Exception;
+use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use PensoPay\Gateway\Gateway\Response\PaymentLinkHandler;
-use PensoPay\Gateway\Helper\Checkout as PensoPayCheckoutHelper;
+use Pensopay\Gateway\Helper\Checkout as PensopayCheckoutHelper;
+use Pensopay\Gateway\V2\Response\PaymentLinkHandler;
 use Psr\Log\LoggerInterface;
 
-class Redirect extends \Magento\Framework\App\Action\Action
+class Redirect extends Action
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $_logger;
+    protected LoggerInterface $_logger;
 
-    /** @var PensoPayCheckoutHelper $_pensopayCheckoutHelper */
-    protected $_pensopayCheckoutHelper;
+    protected PensopayCheckoutHelper $_pensopayCheckoutHelper;
 
-    /** @var StoreManagerInterface $_storeManager3 */
-    protected $_storeManager;
+    protected StoreManagerInterface $_storeManager;
 
     /**
      * Class constructor
      * @param Context $context
      * @param LoggerInterface $logger
-     * @param PensoPayCheckoutHelper $pensopayCheckoutHelper
+     * @param PensopayCheckoutHelper $pensopayCheckoutHelper
      */
     public function __construct(
-        Context $context,
-        LoggerInterface $logger,
-        PensoPayCheckoutHelper $pensopayCheckoutHelper
-    ) {
+        Context                $context,
+        LoggerInterface        $logger,
+        PensopayCheckoutHelper $pensopayCheckoutHelper
+    )
+    {
         $this->_logger = $logger;
         $this->_pensopayCheckoutHelper = $pensopayCheckoutHelper;
         parent::__construct($context);
     }
 
     /**
-     * Redirect to to PensoPay
+     * Redirect to to pensopay
      *
      * @return string
      */
@@ -50,7 +47,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $paymentLink = $order->getPayment()->getAdditionalInformation(PaymentLinkHandler::PAYMENT_LINK);
 
             return $this->_redirect($paymentLink);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->messageManager->addException($e, __('Something went wrong, please try again later'));
             $this->_logger->critical($e);
             $this->_getCheckout()->restoreQuote();

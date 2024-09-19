@@ -1,53 +1,57 @@
 <?php
-    /** @var \Magento\Framework\View\Element\Template $this */
+/** @var Template $this */
 
-    /** @var \PensoPay\Gateway\Helper\Viabill $helper */
-    $helper = $this->helper('\PensoPay\Gateway\Helper\Viabill');
+/** @var Viabill $helper */
 
-    $updateSelectors = [
-        'page-product-bundle' => $helper->getBundleProductUpdateSelector(),
-        'page-product-configurable' => $helper->getConfigurableProductUpdateSelector(),
-        'catalog-category-view' => $helper->getCatalogUpdateSelector()
-    ];
+use Magento\Framework\View\Element\Template;
+use Pensopay\Gateway\Helper\Viabill;
 
-    if ($helper->isActive()):
-?>
+$helper = $this->helper(\Pensopay\Gateway\Helper\Viabill::class);
+
+$updateSelectors = [
+    'page-product-bundle' => $helper->getBundleProductUpdateSelector(),
+    'page-product-configurable' => $helper->getConfigurableProductUpdateSelector(),
+    'catalog-category-view' => $helper->getCatalogUpdateSelector()
+];
+
+if ($helper->isActive()):
+    ?>
     <script type="text/javascript">
         var viabillReset;
 
         require(['jquery', 'domReady!'], function ($) {
             var o;
 
-            var viabillInit = function() {
-                o =document.createElement('script');
-                o.type='text/javascript';
-                o.async=true;
+            var viabillInit = function () {
+                o = document.createElement('script');
+                o.type = 'text/javascript';
+                o.async = true;
                 o.id = 'viabillscript';
-                o.src='https://pricetag.viabill.com/script/<?= $helper->getShopId() ?>';
-                var s=document.getElementsByTagName('script')[0];
-                s.parentNode.insertBefore(o,s);
+                o.src = 'https://pricetag.viabill.com/script/<?= $helper->getShopId() ?>';
+                var s = document.getElementsByTagName('script')[0];
+                s.parentNode.insertBefore(o, s);
             };
 
-            viabillReset = function() {
+            viabillReset = function () {
                 document.getElementById('viabillscript').remove();
                 vb = null;
                 pricetag = null;
                 //Viabill changed their code we need this to force it to re-consider initialized iframes
                 //As uninitialized
-                document.querySelectorAll('div.viabill-pricetag-optional-styles:not([data-dynamic-price=""])').forEach(function(item) {
+                document.querySelectorAll('div.viabill-pricetag-optional-styles:not([data-dynamic-price=""])').forEach(function (item) {
                     item.classList.remove('viabill-pricetag-optional-styles');
                 });
                 viabillInit();
             };
 
-            $(document).ready(function() {
+            $(document).ready(function () {
                 viabillInit();
                 var $body = $('body');
                 <?php foreach ($updateSelectors as $bodyClass => $updateSelector): ?>
                     <?php if (!empty($updateSelector)): ?>
-                        if ($body.hasClass('<?= $bodyClass ?>')) {
-                            $('<?= $updateSelector ?>').on('change click', viabillReset);
-                        }
+                    if ($body.hasClass('<?= $bodyClass ?>')) {
+                        $('<?= $updateSelector ?>').on('change click', viabillReset);
+                    }
                     <?php endif; ?>
                 <?php endforeach; ?>
 

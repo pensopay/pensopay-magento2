@@ -5,13 +5,14 @@
  * See COPYING.txt for license details.
  */
 -->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
     <default>
         <payment>
-            <pensopay>
+            <pensopay_gateway>
                 <active>0</active>
-                <title>Credit Card (PensoPay)</title>
-                <model>PensoPayFacade</model>
+                <title>Credit Card (pensopay)</title>
+                <model>PensopayFacade</model>
                 <position>0</position>
                 <sort_order>1</sort_order>
                 <order_status>pending</order_status>
@@ -25,8 +26,8 @@
                 <can_cancel>1</can_cancel>
                 <can_refund>1</can_refund>
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
-                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
-                <private_key backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
+                <api_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
+                <private_key backend_model="Magento\Config\Model\Config\Backend\Encrypted"/>
                 <testmode>0</testmode>
                 <pending_payment_order_cancel>0</pending_payment_order_cancel>
                 <autocapture>0</autocapture>
@@ -38,13 +39,12 @@
                 <paymentInfoKeys>cc_type,cc_number,exp_month,exp_year</paymentInfoKeys>
                 <cardlogos></cardlogos>
                 <cardlogos_size>25</cardlogos_size>
-                <new_order_status_before_payment>pending</new_order_status_before_payment>
                 <new_order_status>processing</new_order_status>
-            </pensopay>
-            <pensopay_viabill>
+            </pensopay_gateway>
+            <pensopay_gateway_viabill>
                 <active>0</active>
-                <title>ViaBill (PensoPay)</title>
-                <model>PensoPayViabillFacade</model>
+                <title>ViaBill (pensopay)</title>
+                <model>PensopayViabillFacade</model>
                 <position>1</position>
                 <sort_order>2</sort_order>
                 <order_status>pending</order_status>
@@ -55,8 +55,10 @@
                 <show_in_category>1</show_in_category>
                 <show_in_cart>1</show_in_cart>
                 <show_in_checkout>1</show_in_checkout>
-                <bundle_update_selector>.product-options-wrapper input, .product-options-wrapper select</bundle_update_selector>
-                <configurable_update_selector>.product-add-form div.product-options-wrapper</configurable_update_selector>
+                <bundle_update_selector>.product-options-wrapper input, .product-options-wrapper select
+                </bundle_update_selector>
+                <configurable_update_selector>.product-add-form div.product-options-wrapper
+                </configurable_update_selector>
                 <catalog_update_selector>.product-item-details</catalog_update_selector>
                 <allowspecific>0</allowspecific>
                 <is_gateway>1</is_gateway>
@@ -70,11 +72,11 @@
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <cardlogo_enable>1</cardlogo_enable>
                 <cardlogo_size>40</cardlogo_size>
-            </pensopay_viabill>
-            <pensopay_anyday>
+            </pensopay_gateway_viabill>
+            <pensopay_gateway_anyday>
                 <active>0</active>
-                <title>Anyday (PensoPay)</title>
-                <model>PensoPayAnydayFacade</model>
+                <title>Anyday (Pensopay)</title>
+                <model>PensopayAnydayFacade</model>
                 <position>2</position>
                 <sort_order>3</sort_order>
                 <order_status>pending</order_status>
@@ -96,11 +98,11 @@
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <cardlogo_enable>1</cardlogo_enable>
                 <cardlogo_size>40</cardlogo_size>
-            </pensopay_anyday>
-            <pensopay_mobilepay>
+            </pensopay_gateway_anyday>
+            <pensopay_gateway_mobilepay>
                 <active>0</active>
-                <title>MobilePay (PensoPay)</title>
-                <model>PensoPayMobilePayFacade</model>
+                <title>MobilePay (Pensopay)</title>
+                <model>PensopayMobilePayFacade</model>
                 <position>3</position>
                 <sort_order>4</sort_order>
                 <order_status>pending</order_status>
@@ -122,11 +124,11 @@
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <cardlogo_enable>1</cardlogo_enable>
                 <cardlogo_size>40</cardlogo_size>
-            </pensopay_mobilepay>
-            <pensopay_applepay>
+            </pensopay_gateway_mobilepay>
+            <pensopay_gateway_applepay>
                 <active>1</active>
-                <title>ApplePay (PensoPay)</title>
-                <model>PensoPayApplePayFacade</model>
+                <title>ApplePay (Pensopay)</title>
+                <model>PensopayApplePayFacade</model>
                 <position>4</position>
                 <sort_order>5</sort_order>
                 <order_status>pending</order_status>
@@ -148,11 +150,11 @@
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <cardlogo_enable>1</cardlogo_enable>
                 <cardlogo_size>40</cardlogo_size>
-            </pensopay_applepay>
-            <pensopay_swish>
+            </pensopay_gateway_applepay>
+            <pensopay_gateway_swish>
                 <active>0</active>
-                <title>Swish (PensoPay)</title>
-                <model>PensoPaySwishFacade</model>
+                <title>Swish (Pensopay)</title>
+                <model>PensopaySwishFacade</model>
                 <position>5</position>
                 <sort_order>6</sort_order>
                 <order_status>pending</order_status>
@@ -174,11 +176,11 @@
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <cardlogo_enable>1</cardlogo_enable>
                 <cardlogo_size>40</cardlogo_size>
-            </pensopay_swish>
-            <pensopay_klarna>
+            </pensopay_gateway_swish>
+            <pensopay_gateway_klarna>
                 <active>0</active>
-                <title>Klarna (PensoPay)</title>
-                <model>PensoPayKlarnaFacade</model>
+                <title>Klarna (Pensopay)</title>
+                <model>PensopayKlarnaFacade</model>
                 <position>6</position>
                 <sort_order>7</sort_order>
                 <order_status>pending</order_status>
@@ -200,7 +202,12 @@
                 <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
                 <cardlogo_enable>1</cardlogo_enable>
                 <cardlogo_size>40</cardlogo_size>
-            </pensopay_klarna>
+            </pensopay_gateway_klarna>
         </payment>
+        <sales>
+            <totals_sort>
+                <card_surcharge>31</card_surcharge>
+            </totals_sort>
+        </sales>
     </default>
 </config>

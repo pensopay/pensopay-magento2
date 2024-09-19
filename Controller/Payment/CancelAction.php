@@ -1,25 +1,24 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Payment;
+namespace Pensopay\Gateway\Controller\Payment;
 
+use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use PensoPay\Gateway\Helper\Checkout;
+use Pensopay\Gateway\Helper\Checkout;
 
-class CancelAction extends \Magento\Framework\App\Action\Action
+class CancelAction extends Action
 {
-    /**
-     * @var Checkout
-     */
-    private $_checkoutHelper;
+    private Checkout $_checkoutHelper;
 
     /**
      * @param Context $context
      * @param Checkout $checkoutHelper
      */
     public function __construct(
-        Context $context,
+        Context  $context,
         Checkout $checkoutHelper
-    ) {
+    )
+    {
         parent::__construct($context);
         $this->_checkoutHelper = $checkoutHelper;
     }
@@ -28,7 +27,6 @@ class CancelAction extends \Magento\Framework\App\Action\Action
      * Customer canceled payment on gateway side.
      *
      * @return void
-     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {

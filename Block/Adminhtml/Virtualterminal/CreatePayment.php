@@ -1,21 +1,22 @@
 <?php
 
-namespace PensoPay\Gateway\Block\Adminhtml\Virtualterminal;
+namespace Pensopay\Gateway\Block\Adminhtml\Virtualterminal;
 
 use Magento\Backend\Block\Widget\Button;
 use Magento\Backend\Block\Widget\Container;
 use Magento\Backend\Block\Widget\Context;
+use Magento\Backend\Model\UrlInterface;
 
 class CreatePayment extends Container
 {
-    /** @var \Magento\Backend\Model\UrlInterface $_urlInterface */
-    protected $_urlInterface;
+    protected UrlInterface $_urlInterface;
 
     public function __construct(
-        Context $context,
-        \Magento\Backend\Model\UrlInterface $urlInterface,
-        array $data = []
-    ) {
+        Context      $context,
+        UrlInterface $urlInterface,
+        array        $data = []
+    )
+    {
         parent::__construct($context, $data);
         $this->_urlInterface = $urlInterface;
     }

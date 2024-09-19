@@ -1,30 +1,29 @@
 <?php
 
-namespace PensoPay\Gateway\Controller\Payment;
+namespace Pensopay\Gateway\Controller\Payment;
 
+use Magento\Checkout\Model\Session;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Checkout\Model\Session;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\OrderFactory;
 
 class ReturnAction extends Action
 {
-    /** @var Session $_session */
-    protected $_session;
+    protected Session $_session;
 
-    /** @var OrderFactory $_orderFactory */
-    protected $_orderFactory;
+    protected OrderFactory $_orderFactory;
 
-    protected $_encryptor;
+    protected EncryptorInterface $_encryptor;
 
     public function __construct(
-        Context $context,
-        Session $session,
-        OrderFactory $orderFactory,
+        Context            $context,
+        Session            $session,
+        OrderFactory       $orderFactory,
         EncryptorInterface $encryptor
-    ) {
+    )
+    {
         parent::__construct($context);
 
         $this->_session = $session;

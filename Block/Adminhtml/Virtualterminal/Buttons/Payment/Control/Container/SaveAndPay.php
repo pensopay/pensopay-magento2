@@ -1,8 +1,6 @@
 <?php
 
-namespace PensoPay\Gateway\Block\Adminhtml\Virtualterminal\Buttons\Payment\Control\Container;
-
-use PensoPay\Gateway\Model\Payment;
+namespace Pensopay\Gateway\Block\Adminhtml\Virtualterminal\Buttons\Payment\Control\Container;
 
 class SaveAndPay extends Generic
 {
