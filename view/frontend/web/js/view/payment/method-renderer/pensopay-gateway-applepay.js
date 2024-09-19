@@ -1,16 +1,16 @@
 define(
     [
-        'Pensopay_Gateway/js/view/payment/method-renderer/pensopay',
+        'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway',
         'jquery'
     ],
     function (Component, $) {
         'use strict';
         return Component.extend({
             getCode: function () {
-                return 'pensopay_swish';
+                return 'pensopay_gateway_applepay';
             },
             getPaymentMethodExtra: function () {
-                return $('.checkout-swish-logos').html();
+                return $('.checkout-applepay-logos').html();
             }
         });
     }

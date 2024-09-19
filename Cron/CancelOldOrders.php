@@ -57,7 +57,7 @@ class CancelOldOrders
     public function execute()
     {
         //Disabled from admin
-        if (!$this->_scopeConfig->isSetFlag('payment/pensopay/pending_payment_order_cancel', ScopeInterface::SCOPE_STORE)) {
+        if (!$this->_scopeConfig->isSetFlag('payment/pensopay_gateway/pending_payment_order_cancel', ScopeInterface::SCOPE_STORE)) {
             return $this;
         }
 

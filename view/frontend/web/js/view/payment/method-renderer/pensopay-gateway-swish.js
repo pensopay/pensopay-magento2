@@ -1,16 +1,16 @@
 define(
     [
-        'Pensopay_Gateway/js/view/payment/method-renderer/pensopay',
+        'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway',
         'jquery'
     ],
     function (Component, $) {
         'use strict';
         return Component.extend({
             getCode: function () {
-                return 'pensopay_klarna';
+                return 'pensopay_gateway_swish';
             },
             getPaymentMethodExtra: function () {
-                return $('.checkout-klarna-logos').html();
+                return $('.checkout-swish-logos').html();
             }
         });
     }

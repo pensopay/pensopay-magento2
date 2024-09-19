@@ -18,12 +18,12 @@ use Pensopay\Gateway\Model\Payment as PensopayPayment;
 
 class Data extends AbstractHelper
 {
-    const TESTMODE_XML_PATH = 'payment/pensopay/testmode';
-    const TRANSACTION_FEE_SKU = 'transaction_fee';
-    const API_KEY_XML_PATH = 'payment/pensopay/api_key';
-    const PRIVATE_KEY_XML_PATH = 'payment/pensopay/private_key';
-    const AUTOCAPTURE_XML_PATH = 'payment/pensopay/autocapture';
-    const NEW_ORDER_STATUS_XML_PATH = 'payment/pensopay/new_order_status';
+    const TESTMODE_XML_PATH = 'payment/pensopay_gateway/testmode';
+    const TRANSACTION_FEE_LABEL_XML_PATH = 'payment/pensopay_gateway/transaction_fee_label';
+    const API_KEY_XML_PATH = 'payment/pensopay_gateway/api_key';
+    const PRIVATE_KEY_XML_PATH = 'payment/pensopay_gateway/private_key';
+    const AUTOCAPTURE_XML_PATH = 'payment/pensopay_gateway/autocapture';
+    const NEW_ORDER_STATUS_XML_PATH = 'payment/pensopay_gateway/new_order_status';
 
     protected Session $_backendSession;
     protected TransportBuilder $_transportBuilder;
@@ -56,6 +56,11 @@ class Data extends AbstractHelper
             }
         }
         return null;
+    }
+
+    public function getTransactionFeeLabel()
+    {
+        return $this->scopeConfig->getValue(self::TRANSACTION_FEE_LABEL_XML_PATH, ScopeInterface::SCOPE_STORE);
     }
 
     public function getBackendSession(): Session

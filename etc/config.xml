@@ -12,7 +12,7 @@
             <pensopay_gateway>
                 <active>0</active>
                 <title>Credit Card (pensopay)</title>
-                <model>PensopayFacade</model>
+                <model>PensopayGatewayFacade</model>
                 <position>0</position>
                 <sort_order>1</sort_order>
                 <order_status>pending</order_status>
@@ -44,7 +44,7 @@
             <pensopay_gateway_viabill>
                 <active>0</active>
                 <title>ViaBill (pensopay)</title>
-                <model>PensopayViabillFacade</model>
+                <model>PensopayGatewayViabillFacade</model>
                 <position>1</position>
                 <sort_order>2</sort_order>
                 <order_status>pending</order_status>
@@ -76,7 +76,7 @@
             <pensopay_gateway_anyday>
                 <active>0</active>
                 <title>Anyday (Pensopay)</title>
-                <model>PensopayAnydayFacade</model>
+                <model>PensopayGatewayAnydayFacade</model>
                 <position>2</position>
                 <sort_order>3</sort_order>
                 <order_status>pending</order_status>
@@ -102,7 +102,7 @@
             <pensopay_gateway_mobilepay>
                 <active>0</active>
                 <title>MobilePay (Pensopay)</title>
-                <model>PensopayMobilePayFacade</model>
+                <model>PensopayGatewayMobilePayFacade</model>
                 <position>3</position>
                 <sort_order>4</sort_order>
                 <order_status>pending</order_status>
@@ -128,7 +128,7 @@
             <pensopay_gateway_applepay>
                 <active>1</active>
                 <title>ApplePay (Pensopay)</title>
-                <model>PensopayApplePayFacade</model>
+                <model>PensopayGatewayApplePayFacade</model>
                 <position>4</position>
                 <sort_order>5</sort_order>
                 <order_status>pending</order_status>
@@ -154,7 +154,7 @@
             <pensopay_gateway_swish>
                 <active>0</active>
                 <title>Swish (Pensopay)</title>
-                <model>PensopaySwishFacade</model>
+                <model>PensopayGatewaySwishFacade</model>
                 <position>5</position>
                 <sort_order>6</sort_order>
                 <order_status>pending</order_status>
@@ -180,7 +180,7 @@
             <pensopay_gateway_klarna>
                 <active>0</active>
                 <title>Klarna (Pensopay)</title>
-                <model>PensopayKlarnaFacade</model>
+                <model>PensopayGatewayKlarnaFacade</model>
                 <position>6</position>
                 <sort_order>7</sort_order>
                 <order_status>pending</order_status>

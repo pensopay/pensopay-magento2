@@ -1,16 +1,16 @@
 define(
     [
-        'Pensopay_Gateway/js/view/payment/method-renderer/pensopay',
+        'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway',
         'jquery'
     ],
     function (Component, $) {
         'use strict';
         return Component.extend({
             getCode: function () {
-                return 'pensopay_viabill';
+                return 'pensopay_gateway_anyday';
             },
             getPaymentMethodExtra: function () {
-                return $('.checkout-viabill-logos').html() + $('.checkout-viabill').html();
+                return $('.checkout-anyday-logos').html();
             }
         });
     }

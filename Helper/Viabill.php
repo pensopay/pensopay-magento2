@@ -25,15 +25,15 @@ class Viabill extends AbstractHelper
     const TYPE_CART = 'basket';
     const TYPE_CHECKOUT = 'payment';
 
-    const XML_VIABILL_SHOP_ID = 'payment/pensopay_viabill/shop_id';
-    const XML_VIABILL_ACTIVE = 'payment/pensopay_viabill/active';
-    const XML_VIABILL_SHOW_IN_PRODUCT = 'payment/pensopay_viabill/show_in_product';
-    const XML_VIABILL_SHOW_IN_CATEGORY = 'payment/pensopay_viabill/show_in_category';
-    const XML_VIABILL_SHOW_IN_CART = 'payment/pensopay_viabill/show_in_cart';
-    const XML_VIABILL_SHOW_IN_CHECKOUT = 'payment/pensopay_viabill/show_in_checkout';
-    const XML_VIABILL_UPDATE_SELECTOR_BUNDLE = 'payment/pensopay_viabill/bundle_update_selector';
-    const XML_VIABILL_UPDATE_SELECTOR_CONFIGURABLE = 'payment/pensopay_viabill/configurable_update_selector';
-    const XML_VIABILL_UPDATE_SELECTOR_CATALOG = 'payment/pensopay_viabill/catalog_update_selector';
+    const XML_VIABILL_SHOP_ID = 'payment/pensopay_gateway_viabill/shop_id';
+    const XML_VIABILL_ACTIVE = 'payment/pensopay_gateway_viabill/active';
+    const XML_VIABILL_SHOW_IN_PRODUCT = 'payment/pensopay_gateway_viabill/show_in_product';
+    const XML_VIABILL_SHOW_IN_CATEGORY = 'payment/pensopay_gateway_viabill/show_in_category';
+    const XML_VIABILL_SHOW_IN_CART = 'payment/pensopay_gateway_viabill/show_in_cart';
+    const XML_VIABILL_SHOW_IN_CHECKOUT = 'payment/pensopay_gateway_viabill/show_in_checkout';
+    const XML_VIABILL_UPDATE_SELECTOR_BUNDLE = 'payment/pensopay_gateway_viabill/bundle_update_selector';
+    const XML_VIABILL_UPDATE_SELECTOR_CONFIGURABLE = 'payment/pensopay_gateway_viabill/configurable_update_selector';
+    const XML_VIABILL_UPDATE_SELECTOR_CATALOG = 'payment/pensopay_gateway_viabill/catalog_update_selector';
 
     protected LayoutInterface $_layout;
     protected StoreManagerInterface $_storeManager;

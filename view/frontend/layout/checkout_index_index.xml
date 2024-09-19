@@ -20,7 +20,7 @@
                                                             <item name="children" xsi:type="array">
                                                                 <item name="pensopay_gateway" xsi:type="array">
                                                                     <item name="component" xsi:type="string">
-                                                                        Pensopay_Gateway/js/view/payment/pensopay
+                                                                        Pensopay_Gateway/js/view/payment/pensopay-gateway
                                                                     </item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="pensopay_gateway" xsi:type="array">

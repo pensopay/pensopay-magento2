@@ -31,7 +31,7 @@ define(
             },
 
             getCode: function () {
-                return 'pensopay';
+                return 'pensopay_gateway';
             },
             getData: function () {
                 return {
