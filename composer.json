@@ -27,7 +27,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Pensopay\\Payment\\": ""
+            "Pensopay\\Gateway\\": ""
         }
     }
 }
