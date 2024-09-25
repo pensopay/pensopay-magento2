@@ -3,32 +3,39 @@
 namespace Pensopay\Gateway\Controller\Payment;
 
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
 use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Sales\Model\Order;
-use Magento\Sales\Model\OrderFactory;
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\RedirectFactory;
 
-class ReturnAction extends Action
+class ReturnAction implements ActionInterface
 {
     protected Session $_session;
 
-    protected OrderFactory $_orderFactory;
-
     protected EncryptorInterface $_encryptor;
 
+    protected RequestInterface $_request;
+
+    protected RedirectFactory $_resultRedirectFactory;
+
+    protected SearchCriteriaBuilder $_searchCriteriaBuilder;
+
     public function __construct(
-        Context            $context,
         Session            $session,
-        OrderFactory       $orderFactory,
-        EncryptorInterface $encryptor
+        EncryptorInterface $encryptor,
+        RequestInterface   $request,
+        RedirectFactory    $resultRedirectFactory,
+        SearchCriteriaBuilder $searchCriteriaBuilder
     )
     {
-        parent::__construct($context);
-
         $this->_session = $session;
-        $this->_orderFactory = $orderFactory;
         $this->_encryptor = $encryptor;
+        $this->_request = $request;
+        $this->_resultRedirectFactory = $resultRedirectFactory;
+        $this->_searchCriteriaBuilder = $searchCriteriaBuilder;
     }
 
     /**
@@ -41,22 +48,26 @@ class ReturnAction extends Action
         $lastRealOrderId = $this->_session->getLastRealOrderId();
 
         if (!$lastRealOrderId) {
-            $orderHash = $this->getRequest()->getParam('ori');
+            $orderHash = $this->_request->getParam('ori');
             if (!empty($orderHash)) {
                 $orderIncrementId = $this->_encryptor->decrypt($orderHash);
 
-                /** @var Order $order */
-                $order = $this->_orderFactory->create();
-                $order->loadByIncrementId($orderIncrementId);
+                $searchCriteria = $this->_searchCriteriaBuilder->addFilter('increment_id', $orderIncrementId)->create();
+                $searchResult = $this->_orderRepository->getList($searchCriteria);
 
-                if ($order->getIncrementId() === $orderIncrementId) {
-                    $this->_session->setLastSuccessQuoteId($order->getQuoteId());
-                    $this->_session->setLastQuoteId($order->getQuoteId());
-                    $this->_session->setLastRealOrderId($order->getIncrementId());
-                    $this->_session->setLastOrderId($order->getIncrementId());
+                if ($searchResult->getTotalCount()) {
+                    /** @var Order $order */
+                    $order = $searchResult->getFirstItem();
+
+                    if ($order->getIncrementId() === $orderIncrementId) {
+                        $this->_session->setLastSuccessQuoteId($order->getQuoteId());
+                        $this->_session->setLastQuoteId($order->getQuoteId());
+                        $this->_session->setLastRealOrderId($order->getIncrementId());
+                        $this->_session->setLastOrderId($order->getIncrementId());
+                    }
                 }
             }
         }
-        $this->_redirect('checkout/onepage/success');
+        return $this->_resultRedirectFactory->create()->setPath('checkout/onepage/success');
     }
 }

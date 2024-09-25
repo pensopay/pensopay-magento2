@@ -5,6 +5,7 @@ namespace Pensopay\Gateway\Controller\Payment;
 use Exception;
 use Magento\Catalog\Model\Product\Type;
 use Magento\Checkout\Model\Session;
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
@@ -12,20 +13,24 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
 use Magento\Sales\Model\Order\Item;
+use Magento\Sales\Model\OrderRepository;
 use Pensopay\Gateway\Helper\Data;
 use Pensopay\Gateway\Model\Payment;
 use Pensopay\Gateway\Model\PaymentFactory;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\Raw;
 
-class Callback extends Action
+class Callback implements ActionInterface
 {
-    protected LoggerInterface $logger;
+    protected LoggerInterface $_logger;
 
-    protected ScopeConfigInterface $scopeConfig;
+    protected ScopeConfigInterface $_scopeConfig;
 
-    protected OrderInterface $order;
+    protected OrderRepository $_orderRepository;
 
-    protected OrderSender $orderSender;
+    protected OrderSender $_orderSender;
 
     protected Data $_pensoPayHelper;
 
@@ -33,25 +38,35 @@ class Callback extends Action
 
     protected Session $_checkoutSession;
 
+    protected SearchCriteriaBuilder $_searchCriteriaBuilder;
+
+    protected RequestInterface $_request;
+
+    protected Raw $_resultRaw;
+
     public function __construct(
-        Context              $context,
-        LoggerInterface      $logger,
-        ScopeConfigInterface $scopeConfig,
-        OrderInterface       $order,
-        OrderSender          $orderSender,
-        Data                 $pensoPayHelper,
-        PaymentFactory       $paymentFactory,
-        Session              $checkoutSession
+        LoggerInterface       $logger,
+        ScopeConfigInterface  $scopeConfig,
+        OrderSender           $orderSender,
+        Data                  $pensoPayHelper,
+        PaymentFactory        $paymentFactory,
+        Session               $checkoutSession,
+        OrderRepository       $orderRepository,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        RequestInterface      $request,
+        Raw                   $resultRaw
     )
     {
-        $this->scopeConfig = $scopeConfig;
-        $this->logger = $logger;
-        $this->order = $order;
-        $this->orderSender = $orderSender;
+        $this->_scopeConfig = $scopeConfig;
+        $this->_logger = $logger;
+        $this->_orderSender = $orderSender;
         $this->_pensoPayHelper = $pensoPayHelper;
         $this->_pensoPaymentFactory = $paymentFactory;
         $this->_checkoutSession = $checkoutSession;
-        parent::__construct($context);
+        $this->_orderRepository = $orderRepository;
+        $this->_searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->_request = $request;
+        $this->_resultRaw = $resultRaw;
     }
 
     /**
@@ -69,39 +84,38 @@ class Callback extends Action
      */
     public function execute()
     {
-        $body = $this->getRequest()->getContent();
+        $body = $this->_request->getContent();
 
         try {
             //Fetch private key from config and validate checksum
             $key = $this->_pensoPayHelper->getPrivateKey();
             $checksum = hash_hmac('sha256', $body, $key);
-            $submittedChecksum = $this->getRequest()->getHeader('pensopay-signature');
+            $submittedChecksum = $this->_request->getHeader('pensopay-signature');
 
             if ($checksum === $submittedChecksum) {
                 $response = json_decode($body);
 
                 //Make sure that payment is accepted - right now we're ignoring other events
                 if ($response->type === 'payment' && $response->event === 'payment.authorized') {
-                    /**
-                     * Load order by incrementId
-                     * @var Order $order
-                     */
-                    $order = $this->order->loadByIncrementId($response->resource->order_id);
+                    $searchCriteria = $this->_searchCriteriaBuilder->addFilter('increment_id', $response->resource->order_id)->create();
+                    $searchResult = $this->_orderRepository->getList($searchCriteria);
 
-                    if (!$order->getId()) {
-                        $this->logger->debug('Failed to load order with id: ' . $response->resource->order_id);
-                        return;
+                    if (!$searchResult->getTotalCount()) {
+                        $this->_logger->debug('Failed to load order with id: ' . $response->resource->order_id);
+                        return $this->_resultRaw->setHttpResponseCode(400);
                     }
+
+                    $order = $searchResult->getFirstItem();
 
                     //Cancel order if testmode is disabled and this is a test payment
                     $testMode = $this->_pensoPayHelper->getIsTestmode();
 
                     if (!$testMode && $response->resource->testmode === true) {
-                        $this->logger->debug('Order attempted paid with a test card but testmode is disabled.');
+                        $this->_logger->debug('Order attempted paid with a test card but testmode is disabled.');
                         if (!$order->isCanceled()) {
                             $order->registerCancellation("Order attempted paid with test card")->save();
                         }
-                        return;
+                        return $this->_resultRaw->setHttpResponseCode(400);
                     }
 
 //                    Add card metadata
@@ -128,40 +142,40 @@ class Callback extends Action
                     }
 
                     //Add transaction fee if set
-                    if ($response->fee > 0 && false) {
-                        $fee = $response->fee / 100;
-                        $currentFee = $order->getData('card_surcharge');
-                        $calculatedFee = $fee;
-                        if ($currentFee > 0) {
-                            $order->setData('card_surcharge', $fee);
-                            $order->setData('base_card_surcharge', $fee);
-                            $calculatedFee = -$currentFee + $fee;
-                        } else {
-                            $order->setData('card_surcharge', $fee);
-                            $order->setData('base_card_surcharge', $fee);
-                        }
-
-                        $order->setGrandTotal($order->getGrandTotal() + $calculatedFee);
-                        $order->setBaseGrandTotal($order->getBaseGrandTotal() + $calculatedFee);
-
-                        $quoteId = $order->getQuoteId();
-                        if ($quoteId) {
-                            /**
-                             * Not business critical, don't want to stop
-                             * Basically adds support for most order editors.
-                             */
-                            try {
-                                $quote = $this->_quoteRepository->get($quoteId);
-                                if ($quote->getId()) {
-                                    $quote->setData('card_surcharge', $fee);
-                                    $quote->setData('base_card_surcharge', $fee);
-                                    $quote->setGrandTotal($quote->getGrandTotal() + $calculatedFee);
-                                    $quote->setBaseGrandTotal($quote->getBaseGrandTotal() + $calculatedFee);
-                                    $this->_quoteRepository->save($quote);
-                                }
-                            } catch (\Exception $e) {}
-                        }
-                    }
+//                    if (false && $response->fee > 0) {
+//                        $fee = $response->fee / 100;
+//                        $currentFee = $order->getData('card_surcharge');
+//                        $calculatedFee = $fee;
+//                        if ($currentFee > 0) {
+//                            $order->setData('card_surcharge', $fee);
+//                            $order->setData('base_card_surcharge', $fee);
+//                            $calculatedFee = -$currentFee + $fee;
+//                        } else {
+//                            $order->setData('card_surcharge', $fee);
+//                            $order->setData('base_card_surcharge', $fee);
+//                        }
+//
+//                        $order->setGrandTotal($order->getGrandTotal() + $calculatedFee);
+//                        $order->setBaseGrandTotal($order->getBaseGrandTotal() + $calculatedFee);
+//
+//                        $quoteId = $order->getQuoteId();
+//                        if ($quoteId) {
+//                            /**
+//                             * Not business critical, don't want to stop
+//                             * Basically adds support for most order editors.
+//                             */
+//                            try {
+//                                $quote = $this->_quoteRepository->get($quoteId);
+//                                if ($quote->getId()) {
+//                                    $quote->setData('card_surcharge', $fee);
+//                                    $quote->setData('base_card_surcharge', $fee);
+//                                    $quote->setGrandTotal($quote->getGrandTotal() + $calculatedFee);
+//                                    $quote->setBaseGrandTotal($quote->getBaseGrandTotal() + $calculatedFee);
+//                                    $this->_quoteRepository->save($quote);
+//                                }
+//                            } catch (\Exception $e) {}
+//                        }
+//                    }
 
                     /** @var Payment $pensoPayment */
                     $pensoPayment = $this->_pensoPaymentFactory->create();
@@ -170,7 +184,8 @@ class Callback extends Action
                     $pensoPayment->save();
 
                     $this->_pensoPayHelper->setNewOrderStatus($order);
-                    $order->save();
+
+                    $this->_orderRepository->save($order);
 
                     //Send order email
                     if (!$order->getEmailSent()) {
@@ -178,12 +193,14 @@ class Callback extends Action
                     }
                 }
             } else {
-                $this->logger->debug('Checksum mismatch');
-                return;
+                $this->_logger->debug('Checksum mismatch');
+                return $this->_resultRaw->setHttpResponseCode(400);
             }
         } catch (Exception $e) {
-            $this->logger->critical($e->getMessage());
+            $this->_logger->critical($e->getMessage());
         }
+
+        return $this->_resultRaw;
     }
 
     /**
@@ -194,14 +211,13 @@ class Callback extends Action
     private function sendOrderConfirmation($order)
     {
         try {
-            $this->orderSender->send($order);
+            $this->_orderSender->send($order);
             $order->addStatusHistoryComment(__('Order confirmation email sent to customer'))
-                ->setIsCustomerNotified(true)
-                ->save();
+                ->setIsCustomerNotified(true);
         } catch (Exception $e) {
             $order->addStatusHistoryComment(__('Failed to send order confirmation email: %s', $e->getMessage()))
-                ->setIsCustomerNotified(false)
-                ->save();
+                ->setIsCustomerNotified(false);
         }
+        $this->_orderRepository->save($order);
     }
 }

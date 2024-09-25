@@ -4,7 +4,8 @@
     <!-- Pensopay -->
     <virtualType name="PensopayGatewayFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider::CODE
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider::CODE
             </argument>
             <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -35,7 +36,8 @@
     <!-- Viabill -->
     <virtualType name="PensopayGatewayViabillFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider::CODE
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider::CODE
             </argument>
             <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -57,7 +59,8 @@
     </virtualType>
     <virtualType name="PensopayGatewayViabillConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider::CODE
+            <argument name="methodCode" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider::CODE
             </argument>
         </arguments>
     </virtualType>
@@ -65,7 +68,8 @@
     <!-- Mobilepay -->
     <virtualType name="PensopayGatewayMobilePayFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider::CODE
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider::CODE
             </argument>
             <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -96,7 +100,8 @@
     <!-- Anyday -->
     <virtualType name="PensopayGatewayAnydayFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider::CODE
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider::CODE
             </argument>
             <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -119,7 +124,8 @@
     </virtualType>
     <virtualType name="PensopayGatewayAnydayConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider::CODE
+            <argument name="methodCode" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider::CODE
             </argument>
         </arguments>
     </virtualType>
@@ -134,7 +140,8 @@
     <!-- ApplePay -->
     <virtualType name="PensopayGatewayApplePayFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider::CODE
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider::CODE
             </argument>
             <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -165,7 +172,8 @@
     <!-- Swish -->
     <virtualType name="PensopayGatewaySwishFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider::CODE
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider::CODE
             </argument>
             <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -188,7 +196,8 @@
     </virtualType>
     <virtualType name="PensopayGatewaySwishConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider::CODE
+            <argument name="methodCode" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider::CODE
             </argument>
         </arguments>
     </virtualType>
@@ -203,7 +212,8 @@
     <!-- Klarna -->
     <virtualType name="PensopayGatewayKlarnaFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
-            <argument name="code" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider::CODE
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider::CODE
             </argument>
             <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
@@ -225,7 +235,8 @@
     </virtualType>
     <virtualType name="PensopayGatewayKlarnaConfig" type="Magento\Payment\Gateway\Config\Config">
         <arguments>
-            <argument name="methodCode" xsi:type="const">\Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider::CODE
+            <argument name="methodCode" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider::CODE
             </argument>
         </arguments>
     </virtualType>
@@ -268,10 +279,10 @@
     </type>
 
     <!-- Authorization Response handlers -->
-    <virtualType name="PensopayAuthorizationHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
+    <virtualType name="PensopayGatewayAuthorizationHandler" type="Magento\Payment\Gateway\Response\HandlerChain">
         <arguments>
             <argument name="handlers" xsi:type="array">
-                <item name="txnid" xsi:type="string">PensopayGateway\Gateway\V2\Response\TransactionIdHandler</item>
+                <item name="txnid" xsi:type="string">Pensopay\Gateway\V2\Response\TransactionIdHandler</item>
                 <item name="payment_link" xsi:type="string">Pensopay\Gateway\V2\Response\PaymentLinkHandler</item>
             </argument>
         </arguments>
@@ -382,7 +393,7 @@
                 <item name="pensopay_gateway_grid_data_source" xsi:type="string">
                     Pensopay\Gateway\Model\ResourceModel\Payment\Collection
                 </item>
-                <item name="pensopay_virtualterminal_grid_data_source" xsi:type="string">
+                <item name="pensopaygw_virtualterminal_grid_data_source" xsi:type="string">
                     Pensopay\Gateway\Model\ResourceModel\Virtualterminal\Collection
                 </item>
             </argument>

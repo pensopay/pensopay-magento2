@@ -37,7 +37,7 @@ class Status extends AbstractBlock
             $payment = $this->_paymentFactory->create();
             $payment->load($paymentId);
             if ($payment->getId()) {
-                $extraClass = $this->_pensoPayHelper->getStatusColorCode($payment->getLastCode());
+                $extraClass = $this->_pensoPayHelper->getStatusColorCode($payment->getState());
                 return "
                 <div class='payment-status {$extraClass}'>
                     {$payment->getDisplayStatus()}

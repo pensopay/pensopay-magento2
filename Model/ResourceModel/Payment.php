@@ -8,6 +8,6 @@ class Payment extends AbstractDb
 {
     protected function _construct()
     {
-        $this->_setMainTable('pensopay_payment', 'id');
+        $this->_setMainTable(\Pensopay\Gateway\Model\Payment::PAYMENT_TABLE, 'id');
     }
 }

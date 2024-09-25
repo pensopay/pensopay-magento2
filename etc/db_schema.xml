@@ -24,7 +24,7 @@
         <column xsi:type="timestamp" name="created_at" nullable="true" default="NULL" on_update="false" comment="Created At"/>
         <column xsi:type="timestamp" name="updated_at" nullable="true" default="NULL" on_update="false" comment="Updated At"/>
         <column xsi:type="text" name="operations" nullable="false" comment="Operations"/>
-        <column xsi:type="text" name="metadata" nullable="false" comment="Metadata"/>
+        <column xsi:type="text" name="payment_details" nullable="false" comment="Payment Details"/>
         <column xsi:type="varchar" name="fraud_probability" nullable="false" length="255" comment="Fraud Probability"/>
         <column xsi:type="text" name="hash" nullable="false" comment="Payment Hash"/>
         <column xsi:type="varchar" name="acquirer" nullable="false" length="50" comment="Acquirer"/>

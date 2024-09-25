@@ -43,7 +43,7 @@ class State extends Column
                 /** @var Payment $payment */
                 $payment = $this->_paymentFactory->create();
                 $payment->addData($item);
-                $item[$this->getData('name')] = "<span class=\"{$this->_pensoPayHelper->getStatusColorCode($payment->getLastCode())}\"><span>{$payment->getDisplayStatus()}</span></span>";
+                $item[$this->getData('name')] = "<span class=\"{$this->_pensoPayHelper->getStatusColorCode($payment->getState())}\"><span>{$payment->getDisplayStatus()}</span></span>";
             }
         }
 

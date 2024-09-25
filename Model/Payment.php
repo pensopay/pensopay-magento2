@@ -16,7 +16,7 @@ use Pensopay\Gateway\Model\Adapter\PensopayAdapter;
 
 class Payment extends AbstractModel
 {
-    const PAYMENT_TABLE = 'pensopay_payment';
+    const PAYMENT_TABLE = 'pensopay_gateway';
 
     protected PensopayCheckoutHelper $_helper;
     protected PensopayDataHelper $_pensoPayHelper;
@@ -65,19 +65,7 @@ class Payment extends AbstractModel
 
     public function getDisplayStatus()
     {
-//        $lastCode = $this->getLastCode();
-//
-//        $status = '';
-//        if ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_CAPTURE) {
-//            $status = __('Captured');
-//        } elseif ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_CANCEL) {
-//            $status = __('Cancelled');
-//        } elseif ($lastCode == self::STATUS_APPROVED && $this->getLastType() == self::OPERATION_REFUND) {
-//            $status = __('Refunded');
-//        } elseif (!empty(self::STATUS_CODES[$lastCode])) {
-//            $status = self::STATUS_CODES[$lastCode];
-//        }
-//        return sprintf('%s (%s)', $status, $this->getState());
+        return __(ucfirst($this->getState()));
     }
 
     /**
@@ -114,6 +102,7 @@ class Payment extends AbstractModel
 //        }
 //        $this->setOperations(json_encode($payment['operations']));
 //        $this->setMetadata(json_encode($payment['metadata']));
+        $this->setPaymentDetails(json_encode($payment['payment_details'] ?? []));
         $this->setHash(md5($this->getReferenceId() . $this->getLink() . $this->getAmount()));
         if (isset($payment['captured'])) {
             $this->setAmountCaptured($payment['captured'] / 100);

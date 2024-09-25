@@ -9,14 +9,19 @@ use Magento\Store\Model\StoreManagerInterface;
 use Pensopay\Gateway\Helper\Checkout as PensopayCheckoutHelper;
 use Pensopay\Gateway\V2\Response\PaymentLinkHandler;
 use Psr\Log\LoggerInterface;
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\Controller\Result\RedirectFactory;
 
-class Redirect extends Action
+class Redirect implements ActionInterface
 {
     protected LoggerInterface $_logger;
 
     protected PensopayCheckoutHelper $_pensopayCheckoutHelper;
 
     protected StoreManagerInterface $_storeManager;
+
+    protected RedirectFactory $_resultRedirectFactory;
 
     /**
      * Class constructor
@@ -25,14 +30,14 @@ class Redirect extends Action
      * @param PensopayCheckoutHelper $pensopayCheckoutHelper
      */
     public function __construct(
-        Context                $context,
         LoggerInterface        $logger,
-        PensopayCheckoutHelper $pensopayCheckoutHelper
+        PensopayCheckoutHelper $pensopayCheckoutHelper,
+        RedirectFactory        $resultRedirectFactory
     )
     {
         $this->_logger = $logger;
         $this->_pensopayCheckoutHelper = $pensopayCheckoutHelper;
-        parent::__construct($context);
+        $this->_resultRedirectFactory = $resultRedirectFactory;
     }
 
     /**
@@ -46,12 +51,12 @@ class Redirect extends Action
             $order = $this->_pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
             $paymentLink = $order->getPayment()->getAdditionalInformation(PaymentLinkHandler::PAYMENT_LINK);
 
-            return $this->_redirect($paymentLink);
+            return $this->_resultRedirectFactory->create()->setPath($paymentLink);
         } catch (Exception $e) {
             $this->messageManager->addException($e, __('Something went wrong, please try again later'));
             $this->_logger->critical($e);
-            $this->_getCheckout()->restoreQuote();
-            $this->_redirect('checkout/cart');
+            $this->_pensopayCheckoutHelper->getCheckoutSession()->restoreQuote();
+            return $this->_resultRedirectFactory->create()->setPath('checkout/cart');
         }
     }
 }

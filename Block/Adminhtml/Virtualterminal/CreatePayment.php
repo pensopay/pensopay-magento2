@@ -29,10 +29,10 @@ class CreatePayment extends Container
             'class' => 'primary add',
             'button_class' => '',
             'class_name' => Button::class,
-            'onclick' => 'setLocation(\'' . $this->getUrl('pensopay/virtualterminal/edit') . '\')'
+            'onclick' => 'setLocation(\'' . $this->getUrl('pensopaygw/virtualterminal/edit') . '\')'
         ];
 
-        $url = $this->getUrl('pensopay/payment/edit');
+        $url = $this->getUrl('pensopaygw/payment/edit');
         $this->buttonList->add('add_new', $addButtonProps);
 
         return parent::_prepareLayout();

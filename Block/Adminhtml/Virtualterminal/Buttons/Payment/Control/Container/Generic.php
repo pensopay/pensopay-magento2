@@ -41,19 +41,17 @@ class Generic implements ButtonProviderInterface
 
     public function hasPayment()
     {
-        return $this->getPayment() !== null;
+        return $this->getPayment() !== null && $this->getPayment()->getId();
     }
 
     public function getPayment()
     {
-        if (!isset($this->_payment)) {
+        if (!isset($this->_payment) || !$this->_payment->getId()) {
+            $this->_payment = $this->_paymentFactory->create();
             $id = $this->context->getRequestParam('id');
             if ($id) {
                 $this->_payment = $this->_paymentFactory->create();
                 $this->_payment->load($id);
-                if (!$this->_payment->getId()) {
-                    $this->_payment = null; //payment doesn't exist.
-                }
             }
         }
         return $this->_payment;

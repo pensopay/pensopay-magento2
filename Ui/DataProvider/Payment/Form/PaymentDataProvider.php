@@ -10,7 +10,7 @@ class PaymentDataProvider extends AbstractDataProvider
 {
     private PoolInterface $pool;
 
-    protected array $_loadedData;
+    protected array $_loadedData = [];
 
     /**
      * @param string $name
@@ -38,10 +38,12 @@ class PaymentDataProvider extends AbstractDataProvider
 
     public function getData()
     {
-        if (!isset($this->_loadedData)) {
+        if (empty($this->_loadedData)) {
             $items = $this->collection->getItems();
             foreach ($items as $payment) {
-                $this->_loadedData[$payment->getId()] = $payment->getData();
+                if ($payment->getId()) {
+                    $this->_loadedData[$payment->getId()] = $payment->getData();
+                }
             }
         }
         return $this->_loadedData;
@@ -49,7 +51,7 @@ class PaymentDataProvider extends AbstractDataProvider
 
     public function getFirstItem()
     {
-        if (isset($this->_loadedData)) {
+        if (!empty($this->_loadedData)) {
             return $this->_loadedData[0];
         }
         return false;

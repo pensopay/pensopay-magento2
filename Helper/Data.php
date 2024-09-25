@@ -75,10 +75,12 @@ class Data extends AbstractHelper
                 $colorClass = 'grid-severity-minor';
                 break;
             case PensopayPayment::STATE_REJECTED:
+            case PensopayPayment::STATE_CANCELED:
                 $colorClass = 'grid-severity-major';
                 break;
             case PensopayPayment::STATE_AUTHORIZED:
             case PensopayPayment::STATE_CAPTURED:
+            case PensopayPayment::STATE_REFUNDED:
             default:
                 $colorClass = 'grid-severity-notice';
         }
@@ -120,7 +122,7 @@ class Data extends AbstractHelper
 
     public function setNewOrderStatus(OrderInterface $order, $beforePayment = false): self
     {
-        $status = $beforePayment ? $order->getPayment()->getMethodInstance()->getOrderStatus() : $this->getNewOrderStatus();
+        $status = $beforePayment ? $order->getPayment()->getMethodInstance()->getConfigData('order_status') : $this->getNewOrderStatus();
 
         $states = [
             Order::STATE_NEW,

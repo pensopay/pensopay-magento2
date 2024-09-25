@@ -3,14 +3,14 @@
       xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">virtualterminal_payment.virtualterminal_payment_data_source</item>
-            <item name="deps" xsi:type="string">virtualterminal_payment.virtualterminal_payment_data_source</item>
+            <item name="provider" xsi:type="string">pensopaygw_virtualterminal_payment.pensopaygw_virtualterminal_payment_data_source</item>
+            <item name="deps" xsi:type="string">pensopaygw_virtualterminal_payment.pensopaygw_virtualterminal_payment_data_source</item>
             <item name="component" xsi:type="string">Pensopay_Gateway/js/form/form</item>
         </item>
         <item name="label" xsi:type="string" translate="true">Payment Information</item>
         <item name="config" xsi:type="array">
             <item name="dataScope" xsi:type="string">data</item>
-            <item name="namespace" xsi:type="string">virtualterminal_payment</item>
+            <item name="namespace" xsi:type="string">pensopaygw_virtualterminal_payment</item>
         </item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
     </argument>
@@ -37,17 +37,18 @@
             <button name="reset"
                     class="Pensopay\Gateway\Block\Adminhtml\Virtualterminal\Buttons\Payment\Control\Container\Reset"/>
         </buttons>
-        <namespace>virtualterminal_payment</namespace>
+        <namespace>pensopaygw_virtualterminal_payment</namespace>
         <dataScope>data</dataScope>
         <deps>
-            <dep>virtualterminal_payment.virtualterminal_payment_data_source</dep>
+            <dep>pensopaygw_virtualterminal_payment.pensopaygw_virtualterminal_payment_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="virtualterminal_payment_data_source">
+    <dataSource name="pensopaygw_virtualterminal_payment_data_source">
         <argument name="dataProvider" xsi:type="configurableObject">
-            <argument name="class" xsi:type="string">Pensopay\Gateway\Ui\DataProvider\Payment\Form\PaymentDataProvider
+            <argument name="class" xsi:type="string">
+                Pensopay\Gateway\Ui\DataProvider\Payment\Form\PaymentDataProvider
             </argument>
-            <argument name="name" xsi:type="string">virtualterminal_payment_data_source</argument>
+            <argument name="name" xsi:type="string">pensopaygw_virtualterminal_payment_data_source</argument>
             <argument name="primaryFieldName" xsi:type="string">id</argument>
             <argument name="requestFieldName" xsi:type="string">id</argument>
         </argument>

@@ -20,7 +20,7 @@ class Collection extends SearchResult
         FetchStrategy    $fetchStrategy,
         EventManager     $eventManager,
         RequestInterface $request,
-                         $mainTable = 'pensopay_payment',
+                         $mainTable = \Pensopay\Gateway\Model\Payment::PAYMENT_TABLE,
                          $resourceModel = ResourcePayment::class
     )
     {

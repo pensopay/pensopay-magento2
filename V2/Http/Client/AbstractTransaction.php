@@ -6,22 +6,18 @@ use Exception;
 use Magento\Payment\Gateway\Http\ClientException;
 use Magento\Payment\Gateway\Http\ClientInterface;
 use Magento\Payment\Gateway\Http\TransferInterface;
-use Magento\Payment\Model\Method\Logger;
 use Pensopay\Gateway\Model\Adapter\PensopayAdapter;
 use Psr\Log\LoggerInterface;
 
 abstract class AbstractTransaction implements ClientInterface
 {
-    protected Logger $logger;
-
-    protected LoggerInterface $monolog;
+    protected LoggerInterface $logger;
 
     protected PensopayAdapter $adapter;
 
-    public function __construct(Logger $logger, LoggerInterface $monolog, PensopayAdapter $adapter)
+    public function __construct(LoggerInterface $logger, PensopayAdapter $adapter)
     {
         $this->logger = $logger;
-        $this->monolog = $monolog;
         $this->adapter = $adapter;
     }
 
@@ -40,11 +36,11 @@ abstract class AbstractTransaction implements ClientInterface
         try {
             $response['object'] = $this->process($data);
         } catch (Exception $e) {
-            $this->logger->debug([$e->getMessage()]);
+            $this->logger->debug($e->getMessage());
             throw new ClientException(__($e->getMessage()));
         } finally {
             $log['response'] = (array)$response['object'];
-            $this->logger->debug($log);
+            $this->logger->debug(print_r($log, true));
         }
 
         return $response;

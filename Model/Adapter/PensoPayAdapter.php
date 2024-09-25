@@ -147,9 +147,9 @@ class PensopayAdapter
                 $this->_setExtraVirtualTerminalData($attributes, $paymentArray);
             }
 
-//            if ($autoSave) {
-//                $this->_autoSave($paymentArray);
-//            }
+            if ($autoSave) {
+                $this->_autoSave($paymentArray);
+            }
 
             return $paymentArray;
         } catch (Exception $e) {
@@ -176,7 +176,7 @@ class PensopayAdapter
             'order_id' => $attributes['INCREMENT_ID'],
             'currency' => $attributes['CURRENCY'],
             'amount' => $attributes['AMOUNT'],
-            'callback_url' => 'https://' . '6db2-93-176-77-122.ngrok-free.app' . '/pensopaygw/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
+            'callback_url' => 'https://' . '1bce-93-176-77-122.ngrok-free.app' . '/pensopaygw/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
 //            'callback_url' => $this->getFrontUrl('pensopaygw/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
             'testmode' => $this->helper->getIsTestMode(),
         ];
@@ -184,8 +184,8 @@ class PensopayAdapter
         $isVirtualTerminal = isset($attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL]) && $attributes[PensopayHelperCheckout::IS_VIRTUAL_TERMINAL];
         if (!$isVirtualTerminal) {
             $paymentData['autocapture'] = $this->helper->getIsAutocapture();
-            $paymentData['success_url'] = $this->getFrontUrl('pensopay/payment/returnAction', ['_query' => ['ori' => $this->_encryptor->encrypt($attributes['INCREMENT_ID'])]]);
-            $paymentData['cancel_url'] = $this->getFrontUrl('pensopay/payment/cancelAction');
+            $paymentData['success_url'] = $this->getFrontUrl('pensopaygw/payment/returnAction', ['_query' => ['ori' => $this->_encryptor->encrypt($attributes['INCREMENT_ID'])]]);
+            $paymentData['cancel_url'] = $this->getFrontUrl('pensopaygw/payment/cancelAction');
         } else {
             $paymentData['autocapture'] = $attributes['AUTOCAPTURE'];
         }
@@ -282,6 +282,14 @@ class PensopayAdapter
 //            }
 
         } else {
+            $orderData['billing_address'] = [];
+            $orderData['shipping_address'] = [];
+            $orderData['shipping'] = [];
+
+            $orderData['billing_address']['name'] = '';
+            $orderData['shipping_address']['name'] = '';
+            $orderData['shipping']['method'] = 'VirtualTerminal';
+
             $paymentData['methods'][] = 'card';
             $orderData['basket'] = [
                 [
@@ -292,9 +300,6 @@ class PensopayAdapter
                     'vat_rate' => 25, //TODO
                 ]
             ];
-            $orderData['shipping_address'] = [];
-            $orderData['billing_address'] = [];
-            $orderData['shipping'] = [];
         }
 
         $paymentData['order'] = $orderData;

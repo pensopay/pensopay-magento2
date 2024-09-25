@@ -46,7 +46,7 @@ if ($payment !== null): ?>
         </tr>
         <tr>
             <td><?= __('Card number:'); ?></td>
-            <td><?= implode(' ', str_split(sprintf('%sXXXXXX%s', $payment->getAdditionalInformation()['bin'] ?? '', str_replace('xxxx-', '', $payment->getCcLast4())), 4)); ?></td>
+            <td><?= implode(' ', str_split(sprintf('%sXXXXXX%s', $payment->getAdditionalInformation()['bin'] ?? '', str_replace('xxxx-', '', $payment->getCcLast4() ?? '')), 4)); ?></td>
         </tr>
 
         <tr>

@@ -37,7 +37,7 @@
              sortOrder="10"
              resource="Magento_Payment::payment"
              parent="Pensopay_Gateway::config_menu"
-             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay"
+             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway"
         />
         <add id="Pensopay_Gateway::configure_mobilepay"
              title="&#32;&#32;&#32;"
@@ -45,7 +45,7 @@
              sortOrder="20"
              resource="Magento_Payment::payment"
              parent="Pensopay_Gateway::config_menu"
-             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_mobilepay"
+             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_mobilepay"
         />
         <add id="Pensopay_Gateway::configure_viabill"
              title="&#32;&#32;&#32;"
@@ -53,7 +53,7 @@
              sortOrder="30"
              resource="Magento_Payment::payment"
              parent="Pensopay_Gateway::config_menu"
-             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_viabill"
+             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_viabill"
         />
     </menu>
 </config>

@@ -64,12 +64,12 @@ class Generic extends Action
         if (!empty($error)) {
             $this->getMessageManager()->addErrorMessage($error);
         }
-        return $this->_redirect('pensopay/virtualterminal');
+        return $this->_redirect('pensopaygw/virtualterminal');
     }
 
     protected function _getPayment()
     {
-        if (!$this->_payment) {
+        if (!isset($this->_payment) || !$this->_payment->getId()) {
             /** @var RequestInterface $request */
             $request = $this->getRequest();
 
@@ -108,8 +108,8 @@ class Generic extends Action
             'CUSTOMER_STREET' => $postData['customer_street'],
             'CUSTOMER_ZIPCODE' => $postData['customer_zipcode'],
             'CUSTOMER_CITY' => $postData['customer_city'],
-            'AUTOCAPTURE' => $postData['autocapture'],
-            'AUTOFEE' => $postData['autofee'],
+            'AUTOCAPTURE' => (bool)$postData['autocapture'],
+            'AUTOFEE' => (bool)$postData['autofee'],
             'PAYMENT_METHOD' => 'default'
         ];
 
@@ -141,15 +141,12 @@ class Generic extends Action
             if ($payment === true) {
                 throw new Exception(__('Error creating payment.'));
             }
-            $paymentLink = $payment['resource']['link'];
+            $paymentLink = $payment['link'];
             $this->_getSession()->setPaymentLink($paymentLink);
             $this->messageManager->addSuccessMessage($paymentLink);
 
-            /** @var Payment $newPayment */
-            $newPayment = $this->_paymentFactory->create();
-
             if ($sendEmail) {
-                $this->_pensoPayHelper->sendEmail($postData['customer_email'], $postData['customer_name'] ?: '', $newPayment->getAmount(), $newPayment->getCurrency(), $paymentLink);
+                $this->_pensoPayHelper->sendEmail($postData['customer_email'], $postData['customer_name'] ?: '', $payment['amount'] / 100, $payment['currency'], $paymentLink);
             }
         } catch (Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
@@ -206,11 +203,13 @@ class Generic extends Action
                 if (in_array($action, ['capture', 'refund'])) {
                     $payment = $this->_payAdapter->{$action}([
                         'TXN_ID' => $paymentModel->getReferenceId(),
-                        'AMOUNT' => $paymentModel->getAmount() * 100
+                        'AMOUNT' => $paymentModel->getAmount() * 100,
+                        'STORE_ID' => null
                     ]);
                 } else {
                     $payment = $this->_payAdapter->{$action}([
-                        'TXN_ID' => $paymentModel->getReferenceId()
+                        'TXN_ID' => $paymentModel->getReferenceId(),
+                        'STORE_ID' => null
                     ]);
                 }
                 if (isset($payment['errors']) && count($payment['errors'])) {
