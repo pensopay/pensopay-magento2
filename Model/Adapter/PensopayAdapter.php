@@ -176,8 +176,8 @@ class PensopayAdapter
             'order_id' => $attributes['INCREMENT_ID'],
             'currency' => $attributes['CURRENCY'],
             'amount' => $attributes['AMOUNT'],
-            'callback_url' => 'https://' . '1bce-93-176-77-122.ngrok-free.app' . '/pensopaygw/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
-//            'callback_url' => $this->getFrontUrl('pensopaygw/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
+//            'callback_url' => 'https://' . '1bce-93-176-77-122.ngrok-free.app' . '/pensopaygw/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
+            'callback_url' => $this->getFrontUrl('pensopaygw/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
             'testmode' => $this->helper->getIsTestMode(),
         ];
 
