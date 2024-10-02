@@ -15,27 +15,27 @@ define(
             },
             {
                 type: 'pensopay_gateway_viabill',
-                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-viabill.js'
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-viabill'
             },
             {
                 type: 'pensopay_gateway_anyday',
-                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-anyday.js'
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-anyday'
             },
             {
                 type: 'pensopay_gateway_mobilepay',
-                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-mobilepay.js'
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-mobilepay'
             },
             {
                 type: 'pensopay_gateway_applepay',
-                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-applepay.js'
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-applepay'
             },
             {
                 type: 'pensopay_gateway_swish',
-                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-swish.js'
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-swish'
             },
             {
                 type: 'pensopay_gateway_klarna',
-                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-klarna.js'
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-klarna'
             }
         );
         return Component.extend({});
