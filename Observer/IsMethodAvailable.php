@@ -2,7 +2,7 @@
 
 namespace Pensopay\Gateway\Observer;
 
-use hisorange\BrowserDetect\Facade as Browser;
+use hisorange\BrowserDetect\Parser as Browser;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 
@@ -19,21 +19,14 @@ class IsMethodAvailable implements ObserverInterface
         $result = $observer->getEvent()->getResult();
         $methodInstance = $observer->getEvent()->getMethodInstance();
 
-        if (!$result) {
-            return; //If there is some other reason to fail, this isn't going to save it.
-        }
-
-        $isBrowserValid = false;
         switch ($methodInstance->getCode()) {
             case 'pensopay_gateway_applepay':
-                if (Browser::isSafari()) {
-                    $isBrowserValid = true;
+                if (!Browser::isSafari()) {
+                    $result->setData('is_available', false);
                 }
                 break;
             default:
                 break;
         }
-
-        $result->setData('is_available', $isBrowserValid);
     }
 }
