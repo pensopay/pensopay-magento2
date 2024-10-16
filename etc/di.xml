@@ -11,6 +11,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensopayGatewayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -33,6 +34,19 @@
         </arguments>
     </virtualType>
 
+    <virtualType name="PensopayGatewayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensopayGatewayCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
     <!-- Viabill -->
     <virtualType name="PensopayGatewayViabillFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
@@ -43,6 +57,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayViabillValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayViabillValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensopayGatewayViabillValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -64,6 +79,20 @@
             </argument>
         </arguments>
     </virtualType>
+    <virtualType name="PensopayGatewayViabillCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayViabillConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayViabillValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensopayGatewayViabillCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- /Viabill -->
+
 
     <!-- Mobilepay -->
     <virtualType name="PensopayGatewayMobilePayFacade" type="Magento\Payment\Model\Method\Adapter">
@@ -75,6 +104,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayMobilePayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayMobilePayValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensopayGatewayMobilePayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -96,6 +126,19 @@
             </argument>
         </arguments>
     </virtualType>
+    <virtualType name="PensopayGatewayMobilePayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayMobilePayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayMobilePayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensopayGatewayMobilePayCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- /Mobilepay -->
 
     <!-- Anyday -->
     <virtualType name="PensopayGatewayAnydayFacade" type="Magento\Payment\Model\Method\Adapter">
@@ -107,7 +150,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayAnydayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
-            <argument name="validatorPool" xsi:type="object">PensoPayGatewayAnydayValidatorPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayAnydayValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensopayGatewayAnydayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -129,13 +172,20 @@
             </argument>
         </arguments>
     </virtualType>
-    <virtualType name="PensoPayGatewayAnydayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+    <virtualType name="PensopayGatewayAnydayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayAnydayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayAnydayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
         <arguments>
             <argument name="validators" xsi:type="array">
                 <item name="currency" xsi:type="string">Pensopay\Gateway\V2\Validator\Anyday\CurrencyValidator</item>
+                <item name="country" xsi:type="string">PensopayGatewayAnydayCountryValidator</item>
             </argument>
         </arguments>
     </virtualType>
+    <!-- /Anyday -->
 
     <!-- ApplePay -->
     <virtualType name="PensopayGatewayApplePayFacade" type="Magento\Payment\Model\Method\Adapter">
@@ -147,6 +197,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayApplePayValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayApplePayValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensopayGatewayApplePayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -168,6 +219,19 @@
             </argument>
         </arguments>
     </virtualType>
+    <virtualType name="PensopayGatewayApplePayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayApplePayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayApplePayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensopayGatewayApplePayCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- /ApplePay -->
 
     <!-- Swish -->
     <virtualType name="PensopayGatewaySwishFacade" type="Magento\Payment\Model\Method\Adapter">
@@ -179,7 +243,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensopayGatewaySwishValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
-            <argument name="validatorPool" xsi:type="object">PensoPayGatewaySwishValidatorPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewaySwishValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensopayGatewaySwishValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -201,13 +265,20 @@
             </argument>
         </arguments>
     </virtualType>
-    <virtualType name="PensoPayGatewaySwishValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+    <virtualType name="PensopayGatewaySwishCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewaySwishConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewaySwishValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
         <arguments>
             <argument name="validators" xsi:type="array">
                 <item name="currency" xsi:type="string">Pensopay\Gateway\V2\Validator\Swish\CurrencyValidator</item>
+                <item name="country" xsi:type="string">PensopayGatewaySwishCountryValidator</item>
             </argument>
         </arguments>
     </virtualType>
+    <!-- /Swish -->
 
     <!-- Klarna -->
     <virtualType name="PensopayGatewayKlarnaFacade" type="Magento\Payment\Model\Method\Adapter">
@@ -219,6 +290,7 @@
             <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
             <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayKlarnaValueHandlerPool</argument>
             <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayKlarnaValidatorPool</argument>
         </arguments>
     </virtualType>
     <virtualType name="PensopayGatewayKlarnaValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
@@ -240,6 +312,19 @@
             </argument>
         </arguments>
     </virtualType>
+    <virtualType name="PensopayGatewayKlarnaCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayKlarnaValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensopayGatewayKlarnaCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- /Klarna -->
 
     <!-- Commands infrastructure -->
     <virtualType name="PensopayGatewayCommandPool" type="Magento\Payment\Gateway\Command\CommandPool">

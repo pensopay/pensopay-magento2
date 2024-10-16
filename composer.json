@@ -12,10 +12,11 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "symfony/intl": "^5.0 || ^6.0",
+        "ext-json": "*",
         "pensopay/pensopay-php": "*",
-        "ext-json": "*"
+        "hisorange/browser-detect": "^5.0"
     },
     "type": "magento2-module",
     "license": [
