@@ -16,7 +16,8 @@
         "symfony/intl": "^5.0 || ^6.0",
         "ext-json": "*",
         "pensopay/pensopay-php": "*",
-        "hisorange/browser-detect": "^5.0"
+        "hisorange/browser-detect": "^5.0",
+        "illuminate/support": "^11.28"
     },
     "type": "magento2-module",
     "license": [

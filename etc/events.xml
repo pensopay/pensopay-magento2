@@ -16,4 +16,8 @@
     <event name="checkout_type_multishipping_create_orders_single">
         <observer name="pensopay_gateway_sales_model_cos" instance="Pensopay\Gateway\Observer\OnCreateOrder" />
     </event>
+    <event name="payment_method_is_active">
+        <observer name="pensopay_gateway_payment_method_is_active"
+                  instance="Pensopay\Gateway\Observer\IsMethodAvailable"/>
+    </event>
 </config>
