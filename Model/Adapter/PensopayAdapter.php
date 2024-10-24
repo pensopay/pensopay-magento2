@@ -246,12 +246,22 @@ class PensopayAdapter
 
             $attributes['PAYMENT_METHOD'] = $order->getPayment()->getMethod();
 
+
+            $shippingPrice = 0;
+            $vatRate = 0;
+            if ($order->getBaseShippingAmount() > 0 && $order->getBaseShippingInclTax() > 0) {
+                $shippingPrice = $order->getBaseShippingInclTax() * 100;
+                if ($order->getBaseShippingInclTax() - $order->getBaseShippingAmount() > 0) {
+                    $vatRate = 100 / ($order->getBaseShippingAmount() / ($order->getBaseShippingInclTax() - $order->getBaseShippingAmount()));
+                }
+            }
+
 //            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
             $orderData['shipping'] = [
-//                    'amount' => $order->getBaseShippingInclTax() * 100,
+                'price' => $shippingPrice,
                 'method' => $order->getShippingMethod(),
                 'company' => $order->getShippingDescription(),
-                'vat_rate' => 100 / ($order->getBaseShippingAmount() / (($order->getBaseShippingInclTax() - $order->getBaseShippingAmount()) ?: 1))
+                'vat_rate' => $vatRate
             ];
 //            }
 
