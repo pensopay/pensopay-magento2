@@ -78,7 +78,7 @@ class Payment extends AbstractModel
         }
 
 
-        if (!$this->_pensoPayHelper->getIsTestmode() && $payment['testmode']) {
+        if (!$this->_pensoPayHelper->getIsTestmode() && isset($payment['testmode']) && $payment['testmode']) {
             $this->setState(self::STATE_REJECTED);
             return;
         }

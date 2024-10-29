@@ -384,7 +384,7 @@ class PensopayAdapter
             $id = $attributes['TXN_ID'];
             $amount = $attributes['AMOUNT'];
 
-            $requestPayload = new PaymentCapturePaymentRequest([$amount]);
+            $requestPayload = new PaymentCapturePaymentRequest(['amount' => $amount]);
             $result = $this->_client->capturePayment($id, $requestPayload);
             return json_decode((string)$result, true);
         } catch (Exception $e) {

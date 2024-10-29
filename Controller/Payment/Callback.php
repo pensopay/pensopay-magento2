@@ -12,6 +12,7 @@ use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
+use Magento\Sales\Model\Order\Invoice;
 use Magento\Sales\Model\Order\Item;
 use Magento\Sales\Model\OrderRepository;
 use Pensopay\Gateway\Helper\Data;
@@ -79,8 +80,6 @@ class Callback implements ActionInterface
 
     /**
      * Handle callback from pensopay
-     *
-     * @return string
      */
     public function execute()
     {
@@ -96,7 +95,7 @@ class Callback implements ActionInterface
                 $response = json_decode($body);
 
                 //Make sure that payment is accepted - right now we're ignoring other events
-                if ($response->type === 'payment' && $response->event === 'payment.authorized') {
+                if ($response->type === 'payment') {
                     $searchCriteria = $this->_searchCriteriaBuilder->addFilter('increment_id', $response->resource->order_id)->create();
                     $searchResult = $this->_orderRepository->getList($searchCriteria);
 
@@ -105,20 +104,21 @@ class Callback implements ActionInterface
                         return $this->_resultRaw->setHttpResponseCode(400);
                     }
 
+                    /** @var \Magento\Sales\Model\Order $order */
                     $order = $searchResult->getFirstItem();
 
                     //Cancel order if testmode is disabled and this is a test payment
                     $testMode = $this->_pensoPayHelper->getIsTestmode();
 
-                    if (!$testMode && $response->resource->testmode === true) {
+                    if (!$testMode && isset($response->resource->testmode) && $response->resource->testmode === true) {
                         $this->_logger->debug('Order attempted paid with a test card but testmode is disabled.');
                         if (!$order->isCanceled()) {
-                            $order->registerCancellation("Order attempted paid with test card")->save();
+                            $order->registerCancellation(__('Attempted order payment with a test card.'))->save();
                         }
-                        return $this->_resultRaw->setHttpResponseCode(400);
+                        return $this->_resultRaw->setHttpResponseCode(200);
                     }
 
-//                    Add card metadata
+                    //                    Add card metadata
                     $payment = $order->getPayment();
                     if (isset($response->resource->payment_details) && !empty($response->resource->payment_details->last4)) {
                         $payment->setCcType($response->resource->payment_details->brand);
@@ -142,40 +142,65 @@ class Callback implements ActionInterface
                     }
 
                     //Add transaction fee if set
-//                    if (false && $response->fee > 0) {
-//                        $fee = $response->fee / 100;
-//                        $currentFee = $order->getData('card_surcharge');
-//                        $calculatedFee = $fee;
-//                        if ($currentFee > 0) {
-//                            $order->setData('card_surcharge', $fee);
-//                            $order->setData('base_card_surcharge', $fee);
-//                            $calculatedFee = -$currentFee + $fee;
-//                        } else {
-//                            $order->setData('card_surcharge', $fee);
-//                            $order->setData('base_card_surcharge', $fee);
-//                        }
-//
-//                        $order->setGrandTotal($order->getGrandTotal() + $calculatedFee);
-//                        $order->setBaseGrandTotal($order->getBaseGrandTotal() + $calculatedFee);
-//
-//                        $quoteId = $order->getQuoteId();
-//                        if ($quoteId) {
-//                            /**
-//                             * Not business critical, don't want to stop
-//                             * Basically adds support for most order editors.
-//                             */
-//                            try {
-//                                $quote = $this->_quoteRepository->get($quoteId);
-//                                if ($quote->getId()) {
-//                                    $quote->setData('card_surcharge', $fee);
-//                                    $quote->setData('base_card_surcharge', $fee);
-//                                    $quote->setGrandTotal($quote->getGrandTotal() + $calculatedFee);
-//                                    $quote->setBaseGrandTotal($quote->getBaseGrandTotal() + $calculatedFee);
-//                                    $this->_quoteRepository->save($quote);
-//                                }
-//                            } catch (\Exception $e) {}
-//                        }
-//                    }
+                    //                    if (false && $response->fee > 0) {
+                    //                        $fee = $response->fee / 100;
+                    //                        $currentFee = $order->getData('card_surcharge');
+                    //                        $calculatedFee = $fee;
+                    //                        if ($currentFee > 0) {
+                    //                            $order->setData('card_surcharge', $fee);
+                    //                            $order->setData('base_card_surcharge', $fee);
+                    //                            $calculatedFee = -$currentFee + $fee;
+                    //                        } else {
+                    //                            $order->setData('card_surcharge', $fee);
+                    //                            $order->setData('base_card_surcharge', $fee);
+                    //                        }
+                    //
+                    //                        $order->setGrandTotal($order->getGrandTotal() + $calculatedFee);
+                    //                        $order->setBaseGrandTotal($order->getBaseGrandTotal() + $calculatedFee);
+                    //
+                    //                        $quoteId = $order->getQuoteId();
+                    //                        if ($quoteId) {
+                    //                            /**
+                    //                             * Not business critical, don't want to stop
+                    //                             * Basically adds support for most order editors.
+                    //                             */
+                    //                            try {
+                    //                                $quote = $this->_quoteRepository->get($quoteId);
+                    //                                if ($quote->getId()) {
+                    //                                    $quote->setData('card_surcharge', $fee);
+                    //                                    $quote->setData('base_card_surcharge', $fee);
+                    //                                    $quote->setGrandTotal($quote->getGrandTotal() + $calculatedFee);
+                    //                                    $quote->setBaseGrandTotal($quote->getBaseGrandTotal() + $calculatedFee);
+                    //                                    $this->_quoteRepository->save($quote);
+                    //                                }
+                    //                            } catch (\Exception $e) {}
+                    //                        }
+                    //                    }
+
+                    $isAutocapture = isset($response->resource->autocapture) && $response->resource->autocapture === true;
+                    if ($response->event === 'payment.authorized' && !$isAutocapture) {
+                        $this->_setOrderStatusAndSave($order);
+                    } else if ($response->event === 'payment.captured' && $isAutocapture) {
+                        if ($order->canInvoice()) {
+                            /** @var Invoice $invoice */
+                            $invoice = $order->prepareInvoice();
+
+                            //Go through the invoice in offline mode to register everything as paid first
+                            $invoice->addComment('AutoCaptured through pensopay');
+                            $invoice->setRequestedCaptureCase(Invoice::CAPTURE_OFFLINE);
+                            $invoice->register();
+
+                            //Then allow for refunds
+                            $invoice->setTransactionId($response->resource->id);
+                            $invoice->setCanVoidFlag(true);
+                            $invoice->save();
+
+                            $order->addCommentToStatusHistory('AutoCaptured through pensopay');
+                            $this->_setOrderStatusAndSave($order);
+                        } else {
+                            $this->_logger->debug('Received autocapture event but order is not invoiceable: ' . $order->getIncrementId());
+                        }
+                    }
 
                     /** @var Payment $pensoPayment */
                     $pensoPayment = $this->_pensoPaymentFactory->create();
@@ -183,14 +208,7 @@ class Callback implements ActionInterface
                     $pensoPayment->importFromRemotePayment(json_decode($body, true));
                     $pensoPayment->save();
 
-                    $this->_pensoPayHelper->setNewOrderStatus($order);
 
-                    $this->_orderRepository->save($order);
-
-                    //Send order email
-                    if (!$order->getEmailSent()) {
-                        $this->sendOrderConfirmation($order);
-                    }
                 }
             } else {
                 $this->_logger->debug('Checksum mismatch');
@@ -201,6 +219,18 @@ class Callback implements ActionInterface
         }
 
         return $this->_resultRaw;
+    }
+
+    protected function _setOrderStatusAndSave($order)
+    {
+        $this->_pensoPayHelper->setNewOrderStatus($order);
+
+        $this->_orderRepository->save($order);
+
+        //Send order email
+        if (!$order->getEmailSent()) {
+            $this->sendOrderConfirmation($order);
+        }
     }
 
     /**
