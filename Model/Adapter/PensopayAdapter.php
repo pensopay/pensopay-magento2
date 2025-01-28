@@ -174,9 +174,9 @@ class PensopayAdapter
     {
         $paymentData = [
             'order_id' => $attributes['INCREMENT_ID'],
-            'currency' => $attributes['CURRENCY'],
+            'currency' =>  $attributes['CURRENCY'],
             'amount' => $attributes['AMOUNT'],
-//            'callback_url' => 'https://' . '1bce-93-176-77-122.ngrok-free.app' . '/pensopaygw/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
+//            'callback_url' => 'https://x.ngrok-free.app' . '/pensopaygw/payment/callback?isAjax=true', //We add isAjax to counter magento 2.3 CSRF protection
             'callback_url' => $this->getFrontUrl('pensopaygw/payment/callback', ['isAjax' => true]), //We add isAjax to counter magento 2.3 CSRF protection
             'testmode' => $this->helper->getIsTestMode(),
         ];
@@ -469,7 +469,7 @@ class PensopayAdapter
             $id = $attributes['TXN_ID'];
             $amount = $attributes['AMOUNT'];
 
-            $requestPayload = new PaymentRefundPaymentRequest([$amount]);
+            $requestPayload = new PaymentRefundPaymentRequest(['amount' => $amount]);
             $result = $this->_client->refundPayment($id, $requestPayload);
             return json_decode((string)$result, true);
         } catch (Exception $e) {

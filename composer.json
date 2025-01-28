@@ -1,6 +1,6 @@
 {
     "name": "pensopay/magento2-gateway",
-    "description": "Implements integration with the Pensopay payment service provider.",
+    "description": "Implements integration with the Pensopay payment service provider v2.",
     "authors": [
         {
             "name": "Rasmus Bech",

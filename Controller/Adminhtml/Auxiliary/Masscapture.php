@@ -38,7 +38,7 @@ class Masscapture extends Action
                 $order = $this->_orderRepository->get($orderId);
 
                 $method = $order->getPayment()->getMethod();
-                if (!str_contains($method, Pensopay\Gateway)) {
+                if (!str_contains($method, 'Pensopay\Gateway')) {
                     $this->messageManager->addErrorMessage(__('%1 Order was not placed using pensopay', $order->getIncrementId()));
                     continue;
                 }
