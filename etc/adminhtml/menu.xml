@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
         <add id="Pensopay_Gateway::pensopay_menu"
-             title="Pensopay"
+             title="Pensopay V2"
              module="Pensopay_Gateway"
              sortOrder="110"
              dependsOnModule="Pensopay_Gateway"
