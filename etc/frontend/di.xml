@@ -19,6 +19,9 @@
                 <item name="pensopay_gateway_applepay_config_provider" xsi:type="object">
                     Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider
                 </item>
+                <item name="pensopay_gateway_googlepay_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider
+                </item>
                 <item name="pensopay_gateway_swish_config_provider" xsi:type="object">
                     Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider
                 </item>

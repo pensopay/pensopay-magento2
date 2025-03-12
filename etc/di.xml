@@ -233,6 +233,52 @@
     </virtualType>
     <!-- /ApplePay -->
 
+    <!-- GooglePay -->
+    <virtualType name="PensopayGatewayGooglePayFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider::CODE
+            </argument>
+            <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayGooglePayValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayGooglePayValidatorPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayGooglePayValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PensopayGatewayGooglePayConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayGooglePayConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PensopayGatewayGooglePayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayGooglePayConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider::CODE
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayGooglePayCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayGooglePayConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayGooglePayValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensopayGatewayGooglePayCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- /GooglePay -->
+
     <!-- Swish -->
     <virtualType name="PensopayGatewaySwishFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>

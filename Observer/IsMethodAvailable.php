@@ -25,6 +25,10 @@ class IsMethodAvailable implements ObserverInterface
                     $result->setData('is_available', false);
                 }
                 break;
+            case 'pensopay_gateway_googlepay':
+                if (!Browser::isChrome()) {
+                    $result->setData('is_available', false);
+                }
             default:
                 break;
         }

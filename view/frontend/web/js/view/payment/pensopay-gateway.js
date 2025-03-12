@@ -30,6 +30,10 @@ define(
                 component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-applepay'
             },
             {
+                type: 'pensopay_gateway_googlepay',
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-googlepay'
+            },
+            {
                 type: 'pensopay_gateway_swish',
                 component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-swish'
             },

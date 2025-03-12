@@ -9,6 +9,7 @@ use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\State\CommandInterface as BaseCommandInterface;
 use Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider;
@@ -39,6 +40,7 @@ class CommandInterface
             ViabillConfigProvider::CODE,
             AnydayConfigProvider::CODE,
             ApplePayConfigProvider::CODE,
+            GooglePayConfigProvider::CODE,
             MobilePayConfigProvider::CODE,
             SwishConfigProvider::CODE,
             KlarnaConfigProvider::CODE,

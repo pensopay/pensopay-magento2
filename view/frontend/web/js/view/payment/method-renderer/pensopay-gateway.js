@@ -42,7 +42,7 @@ define(
                 pensopayRedirect.execute(this.getCode());
             },
             getPaymentMethodExtra: function () {
-                return $('.checkout-pensopay-logos').html();
+                return $('.checkout-pensopaygw-logos').html();
             }
         });
     }

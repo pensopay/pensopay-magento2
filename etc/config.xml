@@ -11,7 +11,7 @@
         <payment>
             <pensopay_gateway>
                 <active>0</active>
-                <title>Credit Card (pensopay)</title>
+                <title>Credit Card</title>
                 <model>PensopayGatewayFacade</model>
                 <position>0</position>
                 <sort_order>1</sort_order>
@@ -43,7 +43,7 @@
             </pensopay_gateway>
             <pensopay_gateway_viabill>
                 <active>0</active>
-                <title>ViaBill (pensopay)</title>
+                <title>ViaBill</title>
                 <model>PensopayGatewayViabillFacade</model>
                 <position>1</position>
                 <sort_order>2</sort_order>
@@ -75,7 +75,7 @@
             </pensopay_gateway_viabill>
             <pensopay_gateway_anyday>
                 <active>0</active>
-                <title>Anyday (Pensopay)</title>
+                <title>Anyday</title>
                 <model>PensopayGatewayAnydayFacade</model>
                 <position>2</position>
                 <sort_order>3</sort_order>
@@ -101,7 +101,7 @@
             </pensopay_gateway_anyday>
             <pensopay_gateway_mobilepay>
                 <active>0</active>
-                <title>MobilePay (Pensopay)</title>
+                <title>MobilePay</title>
                 <model>PensopayGatewayMobilePayFacade</model>
                 <position>3</position>
                 <sort_order>4</sort_order>
@@ -127,7 +127,7 @@
             </pensopay_gateway_mobilepay>
             <pensopay_gateway_applepay>
                 <active>1</active>
-                <title>ApplePay (Pensopay)</title>
+                <title>ApplePay</title>
                 <model>PensopayGatewayApplePayFacade</model>
                 <position>4</position>
                 <sort_order>5</sort_order>
@@ -151,9 +151,35 @@
                 <cardlogo_enable>1</cardlogo_enable>
                 <cardlogo_size>40</cardlogo_size>
             </pensopay_gateway_applepay>
+            <pensopay_gateway_googlepay>
+                <active>1</active>
+                <title>GooglePay</title>
+                <model>PensopayGatewayGooglePayFacade</model>
+                <position>4</position>
+                <sort_order>5</sort_order>
+                <order_status>pending</order_status>
+                <payment_action>authorize</payment_action>
+                <shop_id></shop_id>
+                <show_in_product>1</show_in_product>
+                <show_in_category>1</show_in_category>
+                <show_in_cart>1</show_in_cart>
+                <show_in_checkout>1</show_in_checkout>
+                <allowspecific>0</allowspecific>
+                <is_gateway>1</is_gateway>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>1</can_capture>
+                <can_capture_partial>1</can_capture_partial>
+                <can_void>1</can_void>
+                <can_cancel>1</can_cancel>
+                <can_refund>1</can_refund>
+                <can_refund_partial_per_invoice>1</can_refund_partial_per_invoice>
+                <cardlogo_enable>1</cardlogo_enable>
+                <cardlogo_size>20</cardlogo_size>
+            </pensopay_gateway_googlepay>
             <pensopay_gateway_swish>
                 <active>0</active>
-                <title>Swish (Pensopay)</title>
+                <title>Swish</title>
                 <model>PensopayGatewaySwishFacade</model>
                 <position>5</position>
                 <sort_order>6</sort_order>
@@ -179,7 +205,7 @@
             </pensopay_gateway_swish>
             <pensopay_gateway_klarna>
                 <active>0</active>
-                <title>Klarna (Pensopay)</title>
+                <title>Klarna</title>
                 <model>PensopayGatewayKlarnaFacade</model>
                 <position>6</position>
                 <sort_order>7</sort_order>

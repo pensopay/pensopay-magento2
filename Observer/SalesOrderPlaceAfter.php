@@ -9,6 +9,7 @@ use Magento\Sales\Model\Order\Payment;
 use Pensopay\Gateway\Helper\Data;
 use Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider;
@@ -46,6 +47,7 @@ class SalesOrderPlaceAfter implements ObserverInterface
             AnydayConfigProvider::CODE,
             MobilePayConfigProvider::CODE,
             ApplePayConfigProvider::CODE,
+            GooglePayConfigProvider::CODE,
             SwishConfigProvider::CODE,
             KlarnaConfigProvider::CODE,
         ], false)) {

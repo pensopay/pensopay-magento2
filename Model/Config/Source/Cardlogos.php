@@ -60,6 +60,10 @@ class Cardlogos implements ArrayInterface
             [
                 'value' => 'applepay',
                 'label' => __('ApplePay')
+            ],
+            [
+                'value' => 'googlepay',
+                'label' => __('GooglePay')
             ]
         ];
     }
