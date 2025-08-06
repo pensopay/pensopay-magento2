@@ -38,9 +38,6 @@ abstract class AbstractTransaction implements ClientInterface
         } catch (Exception $e) {
             $this->logger->debug($e->getMessage());
             throw new ClientException(__($e->getMessage()));
-        } finally {
-            $log['response'] = (array)$response['object'];
-            $this->logger->debug(print_r($log, true));
         }
 
         return $response;
