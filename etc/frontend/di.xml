@@ -28,6 +28,9 @@
                 <item name="pensopay_gateway_klarna_config_provider" xsi:type="object">
                     Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider
                 </item>
+                <item name="pensopay_gateway_vippspsp_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider
+                </item>
             </argument>
         </arguments>
     </type>

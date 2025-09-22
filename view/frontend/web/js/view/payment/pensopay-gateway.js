@@ -40,6 +40,10 @@ define(
             {
                 type: 'pensopay_gateway_klarna',
                 component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-klarna'
+            },
+            {
+                type: 'pensopay_gateway_vippspsp',
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-vippspsp'
             }
         );
         return Component.extend({});

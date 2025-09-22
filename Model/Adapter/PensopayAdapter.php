@@ -31,6 +31,7 @@ use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Intl\Countries;
 
@@ -217,6 +218,9 @@ class PensopayAdapter
                     break;
                 case KlarnaConfigProvider::CODE:
                     $paymentData['methods'][] = 'klarna';
+                    break;
+                case VippsPspConfigProvider::CODE:
+                    $paymentData['methods'][] = 'vippspsp';
                     break;
                 default: //Covers default payment method - pensopay
                     $paymentData['methods'][] = 'card';

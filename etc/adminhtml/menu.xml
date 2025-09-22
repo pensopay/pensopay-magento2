@@ -95,5 +95,13 @@
              parent="Pensopay_Gateway::config_menu"
              action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_klarna"
         />
+        <add id="Pensopay_Gateway::configure_pgw_vippspsp"
+             title="Vipps PSP"
+             module="Pensopay_Gateway"
+             sortOrder="80"
+             resource="Magento_Payment::payment"
+             parent="Pensopay_Gateway::config_menu"
+             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_vippspsp"
+        />
     </menu>
 </config>

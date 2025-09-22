@@ -14,6 +14,7 @@ use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
 
 class SalesOrderPaymentPlaceStart implements ObserverInterface
 {
@@ -37,6 +38,7 @@ class SalesOrderPaymentPlaceStart implements ObserverInterface
             MobilePayConfigProvider::CODE,
             SwishConfigProvider::CODE,
             KlarnaConfigProvider::CODE,
+            VippsPspConfigProvider::CODE,
         ], false)) {
             /** @var Order $order */
             $order = $payment->getOrder();

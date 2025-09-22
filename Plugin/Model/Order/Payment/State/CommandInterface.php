@@ -15,6 +15,7 @@ use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
 
 class CommandInterface
 {
@@ -44,6 +45,7 @@ class CommandInterface
             MobilePayConfigProvider::CODE,
             SwishConfigProvider::CODE,
             KlarnaConfigProvider::CODE,
+            VippsPspConfigProvider::CODE
         ], false)) {
             $orderStatus = Order::STATE_NEW;
             if ($orderStatus && $order->getState() === Order::STATE_PROCESSING) {

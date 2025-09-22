@@ -60,7 +60,7 @@
                                                                                   xsi:type="boolean">true
                                                                             </item>
                                                                         </item>
-                                                                        <item name="pensopay_gateway_vipps" xsi:type="array">
+                                                                        <item name="pensopay_gateway_vippspsp" xsi:type="array">
                                                                             <item name="isBillingAddressRequired"
                                                                                   xsi:type="boolean">true
                                                                             </item>
