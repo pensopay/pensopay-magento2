@@ -20,11 +20,6 @@ class IsMethodAvailable implements ObserverInterface
         $methodInstance = $observer->getEvent()->getMethodInstance();
 
         switch ($methodInstance->getCode()) {
-            case 'pensopay_gateway_applepay':
-                if (!Browser::isSafari()) {
-                    $result->setData('is_available', false);
-                }
-                break;
             case 'pensopay_gateway_googlepay':
                 if (!Browser::isChrome()) {
                     $result->setData('is_available', false);
