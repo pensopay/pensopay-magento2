@@ -243,7 +243,8 @@
                 <show_in_category>1</show_in_category>
                 <show_in_cart>1</show_in_cart>
                 <show_in_checkout>1</show_in_checkout>
-                <allowspecific>0</allowspecific>
+                <allowspecific>1</allowspecific>
+                <specificcountry>AT,BE,DE,ES,FI,IE,IT,NL,FR,GR,PT,DK,GB,NO,SE,CZ,RO,PL,CH</specificcountry>
                 <is_gateway>1</is_gateway>
                 <can_use_checkout>1</can_use_checkout>
                 <can_authorize>1</can_authorize>
@@ -269,7 +270,8 @@
                 <show_in_category>1</show_in_category>
                 <show_in_cart>1</show_in_cart>
                 <show_in_checkout>1</show_in_checkout>
-                <allowspecific>0</allowspecific>
+                <allowspecific>1</allowspecific>
+                <specificcountry>NL</specificcountry>
                 <is_gateway>1</is_gateway>
                 <can_use_checkout>1</can_use_checkout>
                 <can_authorize>1</can_authorize>
