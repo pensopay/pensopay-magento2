@@ -87,18 +87,34 @@
              parent="Pensopay_Gateway::config_menu"
              action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_swish"
         />
-        <add id="Pensopay_Gateway::configure_pgw_klarna"
+<!--        <add id="Pensopay_Gateway::configure_pgw_klarna"-->
+<!--             title="Klarna"-->
+<!--             module="Pensopay_Gateway"-->
+<!--             sortOrder="80"-->
+<!--             resource="Magento_Payment::payment"-->
+<!--             parent="Pensopay_Gateway::config_menu"-->
+<!--             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_klarna"-->
+<!--        />-->
+        <add id="Pensopay_Gateway::configure_pgw_stripeklarna"
              title="Klarna"
              module="Pensopay_Gateway"
-             sortOrder="80"
+             sortOrder="90"
              resource="Magento_Payment::payment"
              parent="Pensopay_Gateway::config_menu"
-             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_klarna"
+             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_stripeklarna"
+        />
+        <add id="Pensopay_Gateway::configure_pgw_stripeideal"
+             title="iDEAL"
+             module="Pensopay_Gateway"
+             sortOrder="100"
+             resource="Magento_Payment::payment"
+             parent="Pensopay_Gateway::config_menu"
+             action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_stripeideal"
         />
         <add id="Pensopay_Gateway::configure_pgw_vippspsp"
              title="Vipps PSP"
              module="Pensopay_Gateway"
-             sortOrder="80"
+             sortOrder="110"
              resource="Magento_Payment::payment"
              parent="Pensopay_Gateway::config_menu"
              action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_vippspsp"

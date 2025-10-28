@@ -12,6 +12,8 @@ use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
@@ -38,6 +40,8 @@ class SalesOrderPaymentPlaceStart implements ObserverInterface
             MobilePayConfigProvider::CODE,
             SwishConfigProvider::CODE,
             KlarnaConfigProvider::CODE,
+            StripeKlarnaConfigProvider::CODE,
+            StripeIdealConfigProvider::CODE,
             VippsPspConfigProvider::CODE,
         ], false)) {
             /** @var Order $order */

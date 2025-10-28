@@ -29,6 +29,8 @@ use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
@@ -222,8 +224,17 @@ class PensopayAdapter
                 case VippsPspConfigProvider::CODE:
                     $paymentData['methods'][] = 'vippspsp';
                     break;
+                case StripeKlarnaConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_klarna';
+                    break;
+                case StripeIdealConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_ideal';
+                    break;
                 default: //Covers default payment method - pensopay
-                    $paymentData['methods'][] = 'card';
+                    $paymentMethods = $this->_pensoHelper->getPaymentMethods();
+                    if (!empty($paymentMethods)) {
+                        $paymentData['methods'] = $paymentMethods;
+                    }
                     break;
             }
 

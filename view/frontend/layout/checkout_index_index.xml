@@ -55,6 +55,18 @@
                                                                                   xsi:type="boolean">true
                                                                             </item>
                                                                         </item>
+                                                                        <item name="pensopay_gateway_stripeklarna"
+                                                                              xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripeideal"
+                                                                              xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
                                                                         <item name="pensopay_gateway_paypal" xsi:type="array">
                                                                             <item name="isBillingAddressRequired"
                                                                                   xsi:type="boolean">true

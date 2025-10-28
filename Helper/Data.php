@@ -24,6 +24,8 @@ class Data extends AbstractHelper
     const PRIVATE_KEY_XML_PATH = 'payment/pensopay_gateway/private_key';
     const AUTOCAPTURE_XML_PATH = 'payment/pensopay_gateway/autocapture';
     const NEW_ORDER_STATUS_XML_PATH = 'payment/pensopay_gateway/new_order_status';
+    const PAYMENT_METHODS_XML_PATH = 'payment/pensopay_gateway/payment_methods';
+    const PAYMENT_METHODS_SPECIFIED_XML_PATH = 'payment/pensopay_gateway/payment_methods_specified';
 
     protected Session $_backendSession;
     protected TransportBuilder $_transportBuilder;
@@ -172,5 +174,19 @@ class Data extends AbstractHelper
     public function getNewOrderStatus(): string
     {
         return $this->scopeConfig->getValue(self::NEW_ORDER_STATUS_XML_PATH, ScopeInterface::SCOPE_STORE);
+    }
+
+    public function getPaymentMethods(): array
+    {
+        $paymentMethods = $this->scopeConfig->getValue(self::PAYMENT_METHODS_XML_PATH, ScopeInterface::SCOPE_STORE);
+
+        switch ($paymentMethods) {
+            case 'specified':
+                return explode(',', $this->scopeConfig->getValue(self::PAYMENT_METHODS_SPECIFIED_XML_PATH, ScopeInterface::SCOPE_STORE) ?? '');
+            case 'creditcard':
+                return ['card'];
+            default:
+                return [];
+        }
     }
 }

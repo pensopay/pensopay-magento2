@@ -42,6 +42,14 @@ define(
                 component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-klarna'
             },
             {
+                type: 'pensopay_gateway_stripeklarna',
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-stripeklarna'
+            },
+            {
+                type: 'pensopay_gateway_stripeideal',
+                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-stripeideal'
+            },
+            {
                 type: 'pensopay_gateway_vippspsp',
                 component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-vippspsp'
             }

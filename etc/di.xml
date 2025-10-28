@@ -372,6 +372,98 @@
     </virtualType>
     <!-- /Klarna -->
 
+    <!-- Stripe Klarna -->
+    <virtualType name="PensopayGatewayStripeKlarnaFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider::CODE
+            </argument>
+            <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayStripeKlarnaValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayStripeKlarnaValidatorPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeKlarnaValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PensopayGatewayStripeKlarnaConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeKlarnaConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PensopayGatewayStripeKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeKlarnaConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider::CODE
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeKlarnaCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayStripeKlarnaConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeKlarnaValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensopayGatewayStripeKlarnaCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- /Stripe Klarna -->
+
+    <!-- Stripe iDEAL -->
+    <virtualType name="PensopayGatewayStripeIdealFacade" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider::CODE
+            </argument>
+            <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
+            <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayStripeIdealValueHandlerPool</argument>
+            <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
+            <argument name="validatorPool" xsi:type="object">PensopayGatewayStripeIdealValidatorPool</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeIdealValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">PensopayGatewayStripeIdealConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeIdealConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">PensopayGatewayStripeIdealConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeIdealConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">
+                \Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider::CODE
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeIdealCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
+        <arguments>
+            <argument name="config" xsi:type="object">PensopayGatewayStripeIdealConfig</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="PensopayGatewayStripeIdealValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="country" xsi:type="string">PensopayGatewayStripeIdealCountryValidator</item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <!-- /Stripe iDEAL -->
+
     <!-- VippsPSP -->
     <virtualType name="PensopayGatewayVippsPspFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
