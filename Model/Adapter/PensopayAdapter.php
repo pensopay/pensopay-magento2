@@ -27,7 +27,6 @@ use Pensopay\Gateway\Model\PaymentFactory;
 use Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider;
@@ -217,9 +216,6 @@ class PensopayAdapter
                     break;
                 case SwishConfigProvider::CODE:
                     $paymentData['methods'][] = 'swish';
-                    break;
-                case KlarnaConfigProvider::CODE:
-                    $paymentData['methods'][] = 'klarna';
                     break;
                 case VippsPspConfigProvider::CODE:
                     $paymentData['methods'][] = 'vippspsp';

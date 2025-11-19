@@ -49,12 +49,6 @@
                                                                                   xsi:type="boolean">true
                                                                             </item>
                                                                         </item>
-                                                                        <item name="pensopay_gateway_klarnapayments"
-                                                                              xsi:type="array">
-                                                                            <item name="isBillingAddressRequired"
-                                                                                  xsi:type="boolean">true
-                                                                            </item>
-                                                                        </item>
                                                                         <item name="pensopay_gateway_stripeklarna"
                                                                               xsi:type="array">
                                                                             <item name="isBillingAddressRequired"

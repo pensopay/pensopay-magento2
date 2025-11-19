@@ -9,7 +9,6 @@ use Magento\Sales\Model\Order\Payment;
 use Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider;
@@ -39,7 +38,6 @@ class SalesOrderPaymentPlaceStart implements ObserverInterface
             GooglePayConfigProvider::CODE,
             MobilePayConfigProvider::CODE,
             SwishConfigProvider::CODE,
-            KlarnaConfigProvider::CODE,
             StripeKlarnaConfigProvider::CODE,
             StripeIdealConfigProvider::CODE,
             VippsPspConfigProvider::CODE,

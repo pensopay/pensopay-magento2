@@ -326,52 +326,6 @@
     </virtualType>
     <!-- /Swish -->
 
-    <!-- Klarna -->
-    <virtualType name="PensopayGatewayKlarnaFacade" type="Magento\Payment\Model\Method\Adapter">
-        <arguments>
-            <argument name="code" xsi:type="const">
-                \Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider::CODE
-            </argument>
-            <argument name="infoBlockType" xsi:type="string">Pensopay\Gateway\Block\Info</argument>
-            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form</argument>
-            <argument name="valueHandlerPool" xsi:type="object">PensopayGatewayKlarnaValueHandlerPool</argument>
-            <argument name="commandPool" xsi:type="object">PensopayGatewayCommandPool</argument>
-            <argument name="validatorPool" xsi:type="object">PensopayGatewayKlarnaValidatorPool</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="PensopayGatewayKlarnaValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
-        <arguments>
-            <argument name="handlers" xsi:type="array">
-                <item name="default" xsi:type="string">PensopayGatewayKlarnaConfigValueHandler</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="PensopayGatewayKlarnaConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
-        <arguments>
-            <argument name="configInterface" xsi:type="object">PensopayGatewayKlarnaConfig</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="PensopayGatewayKlarnaConfig" type="Magento\Payment\Gateway\Config\Config">
-        <arguments>
-            <argument name="methodCode" xsi:type="const">
-                \Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider::CODE
-            </argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="PensopayGatewayKlarnaCountryValidator" type="Magento\Payment\Gateway\Validator\CountryValidator">
-        <arguments>
-            <argument name="config" xsi:type="object">PensopayGatewayKlarnaConfig</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="PensopayGatewayKlarnaValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
-        <arguments>
-            <argument name="validators" xsi:type="array">
-                <item name="country" xsi:type="string">PensopayGatewayKlarnaCountryValidator</item>
-            </argument>
-        </arguments>
-    </virtualType>
-    <!-- /Klarna -->
-
     <!-- Stripe Klarna -->
     <virtualType name="PensopayGatewayStripeKlarnaFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>

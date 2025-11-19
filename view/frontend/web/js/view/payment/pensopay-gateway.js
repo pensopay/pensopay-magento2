@@ -38,10 +38,6 @@ define(
                 component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-swish'
             },
             {
-                type: 'pensopay_gateway_klarna',
-                component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-klarna'
-            },
-            {
                 type: 'pensopay_gateway_stripeklarna',
                 component: 'Pensopay_Gateway/js/view/payment/method-renderer/pensopay-gateway-stripeklarna'
             },

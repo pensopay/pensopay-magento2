@@ -25,9 +25,6 @@
                 <item name="pensopay_gateway_swish_config_provider" xsi:type="object">
                     Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider
                 </item>
-<!--                <item name="pensopay_gateway_klarna_config_provider" xsi:type="object">-->
-<!--                    Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider-->
-<!--                </item>-->
                 <item name="pensopay_gateway_stripeklarna_config_provider" xsi:type="object">
                     Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider
                 </item>
