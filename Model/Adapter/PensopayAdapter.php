@@ -249,7 +249,7 @@ class PensopayAdapter
             $orderData['shipping_address']['address'] = $shippingAddress->getStreetLine1();
             $orderData['shipping_address']['zipcode'] = $shippingAddress->getPostcode();
             $orderData['shipping_address']['city'] = $shippingAddress->getCity();
-            $orderData['shipping_address']['country'] = Countries::getAlpha3Code($shippingAddress->getCountryId());
+            $orderData['shipping_address']['country'] = $shippingAddress->getCountryId();
             $orderData['shipping_address']['email'] = $shippingAddress->getEmail();
             $orderData['shipping_address']['phone_number'] = $shippingAddress->getTelephone();
 
@@ -259,12 +259,11 @@ class PensopayAdapter
             $orderData['billing_address']['address'] = $billingAddress->getStreetLine1();
             $orderData['billing_address']['zipcode'] = $billingAddress->getPostcode();
             $orderData['billing_address']['city'] = $billingAddress->getCity();
-            $orderData['billing_address']['country'] = Countries::getAlpha3Code($billingAddress->getCountryId());
+            $orderData['billing_address']['country'] = $billingAddress->getCountryId();
             $orderData['billing_address']['email'] = $billingAddress->getEmail();
             $orderData['billing_address']['phone_number'] = $billingAddress->getTelephone();
 
             $attributes['PAYMENT_METHOD'] = $order->getPayment()->getMethod();
-
 
             $shippingPrice = 0;
             $vatRate = 0;
@@ -275,41 +274,12 @@ class PensopayAdapter
                 }
             }
 
-//            if ($attributes['PAYMENT_METHOD'] !== KlarnaPaymentsConfigProvider::CODE) {
             $orderData['shipping'] = [
                 'price' => $shippingPrice,
                 'method' => $order->getShippingMethod(),
                 'company' => $order->getShippingDescription(),
                 'vat_rate' => $vatRate
             ];
-//            }
-
-            //Build basket array
-            $items = $attributes['ITEMS'];
-            $orderData['basket'] = [];
-            foreach ($items as $item) {
-                if (!$item->getPrice() && $item->getParentItemId()) {
-                    continue; //Simples of configurables that carry no prices aren't wanted
-                }
-                $orderData['basket'][] = [
-                    'qty' => (int)$item->getQtyOrdered(),
-                    'name' => $item->getName(),
-                    'sku' => $item->getSku(),
-                    'price' => (float)(round(($item->getBaseRowTotalInclTax() - $item->getBaseDiscountAmount()) / $item->getQtyOrdered(), 2) * 100),
-                    'vat_rate' => $item->getTaxPercent() ?: 1
-                ];
-            }
-
-//            if ($attributes['PAYMENT_METHOD'] === KlarnaPaymentsConfigProvider::CODE) {
-//                $form['basket'][] = [
-//                    'qty' => 1,
-//                    'item_no' => 'shipping',
-//                    'item_name' => 'Shipping',
-//                    'item_price' => (int)($order->getShippingInclTax() * 100),
-//                    'vat_rate' => 0,
-//                ];
-//            }
-
         } else {
             $orderData['billing_address'] = [];
             $orderData['shipping_address'] = [];
@@ -320,15 +290,6 @@ class PensopayAdapter
             $orderData['shipping']['method'] = 'VirtualTerminal';
 
             $paymentData['methods'][] = 'card';
-            $orderData['basket'] = [
-                [
-                    'qty' => 1,
-                    'name' => 'VirtualTerminal Payment',
-                    'sku' => 'virtualterminal',
-                    'price' => $attributes['AMOUNT'],
-                    'vat_rate' => 25, //TODO
-                ]
-            ];
         }
 
         $paymentData['order'] = $orderData;

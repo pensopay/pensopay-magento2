@@ -29,7 +29,7 @@ class IsMethodAvailable implements ObserverInterface
                 break;
             case 'pensopay_gateway_stripeklarna':
                 if (!in_array($quote->getCurrency()->getQuoteCurrencyCode(),
-                    ['EUR', 'GBP', 'DKK', 'NOK', 'SEK', 'CZK', 'RON', 'PLN', 'CHF'],
+                    ['AUD', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'NOK', 'NZD', 'PLN', 'RON', 'SEK', 'USD'],
               true
                 )) {
                     $result->setData('is_available', false);
