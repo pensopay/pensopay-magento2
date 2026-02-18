@@ -13,11 +13,9 @@
     ],
     "require": {
         "php": ">=8.1",
-        "symfony/intl": "^5.0 || ^6.0",
         "ext-json": "*",
         "pensopay/pensopay-php": "*",
-        "hisorange/browser-detect": "^5.0",
-        "illuminate/support": "^11.28"
+        "hisorange/browser-detect": "^5.0"
     },
     "type": "magento2-module",
     "license": [

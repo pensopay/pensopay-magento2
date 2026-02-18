@@ -34,7 +34,6 @@ use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\Intl\Countries;
 
 class PensopayAdapter
 {

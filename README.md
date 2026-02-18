@@ -5,7 +5,7 @@ Important: This plugin supports pensopay v2 payments via app.pensopay.com. If yo
 With pensopay payments v2 you are able to integrate pensopay v2 gateway on your Magento 2 Store.
 In moments you will be able to receive payments via credit card, MobilePay, Apple Pay, Viabill, Anyday, Swish.
 
-Tested in Magento 2.4.4 - 2.4.7
+Tested in Magento 2.4.4 - 2.4.8
 
 Module supports:
 * Authorize
