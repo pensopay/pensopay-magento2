@@ -9,6 +9,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Quote\Model\QuoteRepository;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Email\Sender\OrderSender;
@@ -45,6 +46,8 @@ class Callback implements ActionInterface
 
     protected Raw $_resultRaw;
 
+    protected QuoteRepository $_quoteRepository;
+
     public function __construct(
         LoggerInterface       $logger,
         ScopeConfigInterface  $scopeConfig,
@@ -55,7 +58,8 @@ class Callback implements ActionInterface
         OrderRepository       $orderRepository,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         RequestInterface      $request,
-        Raw                   $resultRaw
+        Raw                   $resultRaw,
+        QuoteRepository       $quoteRepository
     )
     {
         $this->_scopeConfig = $scopeConfig;
@@ -68,6 +72,7 @@ class Callback implements ActionInterface
         $this->_searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->_request = $request;
         $this->_resultRaw = $resultRaw;
+        $this->_quoteRepository = $quoteRepository;
     }
 
     /**
@@ -142,40 +147,40 @@ class Callback implements ActionInterface
                     }
 
                     //Add transaction fee if set
-                    //                    if (false && $response->fee > 0) {
-                    //                        $fee = $response->fee / 100;
-                    //                        $currentFee = $order->getData('card_surcharge');
-                    //                        $calculatedFee = $fee;
-                    //                        if ($currentFee > 0) {
-                    //                            $order->setData('card_surcharge', $fee);
-                    //                            $order->setData('base_card_surcharge', $fee);
-                    //                            $calculatedFee = -$currentFee + $fee;
-                    //                        } else {
-                    //                            $order->setData('card_surcharge', $fee);
-                    //                            $order->setData('base_card_surcharge', $fee);
-                    //                        }
-                    //
-                    //                        $order->setGrandTotal($order->getGrandTotal() + $calculatedFee);
-                    //                        $order->setBaseGrandTotal($order->getBaseGrandTotal() + $calculatedFee);
-                    //
-                    //                        $quoteId = $order->getQuoteId();
-                    //                        if ($quoteId) {
-                    //                            /**
-                    //                             * Not business critical, don't want to stop
-                    //                             * Basically adds support for most order editors.
-                    //                             */
-                    //                            try {
-                    //                                $quote = $this->_quoteRepository->get($quoteId);
-                    //                                if ($quote->getId()) {
-                    //                                    $quote->setData('card_surcharge', $fee);
-                    //                                    $quote->setData('base_card_surcharge', $fee);
-                    //                                    $quote->setGrandTotal($quote->getGrandTotal() + $calculatedFee);
-                    //                                    $quote->setBaseGrandTotal($quote->getBaseGrandTotal() + $calculatedFee);
-                    //                                    $this->_quoteRepository->save($quote);
-                    //                                }
-                    //                            } catch (\Exception $e) {}
-                    //                        }
-                    //                    }
+                    if (isset($response->resource->card_fee) && $response->resource->card_fee > 0) {
+                        $fee = $response->resource->card_fee / 100;
+                        $currentFee = $order->getData('card_surcharge');
+                        $calculatedFee = $fee;
+                        if ($currentFee > 0) {
+                            $order->setData('card_surcharge', $fee);
+                            $order->setData('base_card_surcharge', $fee);
+                            $calculatedFee = -$currentFee + $fee;
+                        } else {
+                            $order->setData('card_surcharge', $fee);
+                            $order->setData('base_card_surcharge', $fee);
+                        }
+
+                        $order->setGrandTotal($order->getGrandTotal() + $calculatedFee);
+                        $order->setBaseGrandTotal($order->getBaseGrandTotal() + $calculatedFee);
+
+                        $quoteId = $order->getQuoteId();
+                        if ($quoteId) {
+                            /**
+                             * Not business critical, don't want to stop
+                             * Basically adds support for most order editors.
+                             */
+                            try {
+                                $quote = $this->_quoteRepository->get($quoteId);
+                                if ($quote->getId()) {
+                                    $quote->setData('card_surcharge', $fee);
+                                    $quote->setData('base_card_surcharge', $fee);
+                                    $quote->setGrandTotal($quote->getGrandTotal() + $calculatedFee);
+                                    $quote->setBaseGrandTotal($quote->getBaseGrandTotal() + $calculatedFee);
+                                    $this->_quoteRepository->save($quote);
+                                }
+                            } catch (\Exception $e) {}
+                        }
+                    }
 
                     $isAutocapture = isset($response->resource->autocapture) && $response->resource->autocapture === true;
                     if ($response->event === 'payment.authorized' && !$isAutocapture) {
