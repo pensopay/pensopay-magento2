@@ -49,8 +49,8 @@ class Payment extends AbstractModel
         OrderRepository        $orderRepository,
         SearchCriteriaBuilder  $searchCriteriaBuilder,
         PensopayAdapter        $paymentAdapter,
-        AbstractResource       $resource = null,
-        AbstractDb             $resourceCollection = null,
+        ?AbstractResource      $resource = null,
+        ?AbstractDb            $resourceCollection = null,
         array                  $data = []
     )
     {
