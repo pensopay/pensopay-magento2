@@ -96,7 +96,7 @@
              action="pensopaygw/auxiliary/redirectpayment/type/payment_us_pensopay_gateway_stripeklarna"
         />
         <add id="Pensopay_Gateway::configure_pgw_stripeideal"
-             title="iDEAL"
+             title="iDEAL | Wero"
              module="Pensopay_Gateway"
              sortOrder="100"
              resource="Magento_Payment::payment"

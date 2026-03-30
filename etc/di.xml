@@ -372,7 +372,7 @@
     </virtualType>
     <!-- /Stripe Klarna -->
 
-    <!-- Stripe iDEAL -->
+    <!-- Stripe iDEAL | Wero -->
     <virtualType name="PensopayGatewayStripeIdealFacade" type="Magento\Payment\Model\Method\Adapter">
         <arguments>
             <argument name="code" xsi:type="const">
@@ -416,7 +416,7 @@
             </argument>
         </arguments>
     </virtualType>
-    <!-- /Stripe iDEAL -->
+    <!-- /Stripe iDEAL | Wero -->
 
     <!-- VippsPSP -->
     <virtualType name="PensopayGatewayVippsPspFacade" type="Magento\Payment\Model\Method\Adapter">
