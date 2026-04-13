@@ -89,7 +89,7 @@ class Data extends AbstractHelper
         return $colorClass;
     }
 
-    public function sendEmail($email, $name, $amount, $currency, $link): bool
+    public function sendEmail($email, $name, $amount, $currency, $link, $storeId = null): bool
     {
         $vars = [
             'currency' => $currency,
@@ -97,8 +97,8 @@ class Data extends AbstractHelper
             'link' => $link
         ];
 
-        $senderName = $this->scopeConfig->getValue('trans_email/ident_sales/name');
-        $senderEmail = $this->scopeConfig->getValue('trans_email/ident_sales/email');
+        $senderName = $this->scopeConfig->getValue('trans_email/ident_sales/name', ScopeInterface::SCOPE_STORE, $storeId);
+        $senderEmail = $this->scopeConfig->getValue('trans_email/ident_sales/email', ScopeInterface::SCOPE_STORE, $storeId);
 
         $postObject = new DataObject();
         $postObject->setData($vars);
@@ -111,7 +111,7 @@ class Data extends AbstractHelper
         $transport = $this->_transportBuilder->setTemplateIdentifier('pensopay_gateway_paymentlink_email')
             ->setTemplateOptions([
                 'area' => Area::AREA_FRONTEND,
-                'store' => Store::DEFAULT_STORE_ID
+                'store' => $storeId ?? Store::DEFAULT_STORE_ID
             ])
             ->setTemplateVars($vars)
             ->setFrom($sender)
@@ -151,9 +151,9 @@ class Data extends AbstractHelper
         return $this;
     }
 
-    public function getIsTestmode(): bool
+    public function getIsTestmode($storeId = null): bool
     {
-        return $this->scopeConfig->isSetFlag(self::TESTMODE_XML_PATH, ScopeInterface::SCOPE_STORE);
+        return $this->scopeConfig->isSetFlag(self::TESTMODE_XML_PATH, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     public function getApiKey($storeId = null): string

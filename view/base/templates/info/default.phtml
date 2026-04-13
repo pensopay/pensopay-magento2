@@ -17,12 +17,23 @@ $specificInfo = $block->getSpecificInformation();
 <?php
 $payment = $block->getInfo();
 $transactionId = $payment->getLastTransId();
-//get object manager
 
 $transactionHelper = $this->helper(Transaction::class);
-$transactionHelper->getPaymentForOrderId($payment->getOrder()->getIncrementId(), $transactionId);
+$transactionError = null;
 
-if ($payment !== null): ?>
+try {
+    $transactionHelper->getPaymentForOrderId($payment->getOrder()->getIncrementId(), $transactionId);
+} catch (\Exception $e) {
+    $transactionError = $e->getMessage();
+}
+
+if ($transactionError !== null): ?>
+    <div class="message message-error error">
+        <div data-ui-id="messages-message-error">
+            <?= __('Could not retrieve payment information from pensopay: %1', $block->escapeHtml($transactionError)); ?>
+        </div>
+    </div>
+<?php elseif ($payment !== null): ?>
     <table border="0">
         <?php if ($payment->getLastTransId()): ?>
             <tr>

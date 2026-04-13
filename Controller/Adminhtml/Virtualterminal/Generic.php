@@ -200,16 +200,17 @@ class Generic extends Action
         $paymentModel = $this->_getPayment();
         if ($paymentModel) {
             try {
+                $storeId = $this->_pensoPayHelper->getStoreIdForOrderIncrement($paymentModel->getOrderId());
                 if (in_array($action, ['capture', 'refund'])) {
                     $payment = $this->_payAdapter->{$action}([
                         'TXN_ID' => $paymentModel->getReferenceId(),
                         'AMOUNT' => $paymentModel->getAmount() * 100,
-                        'STORE_ID' => null
+                        'STORE_ID' => $storeId
                     ]);
                 } else {
                     $payment = $this->_payAdapter->{$action}([
                         'TXN_ID' => $paymentModel->getReferenceId(),
-                        'STORE_ID' => null
+                        'STORE_ID' => $storeId
                     ]);
                 }
                 if (isset($payment['errors']) && count($payment['errors'])) {

@@ -113,7 +113,7 @@ class Callback implements ActionInterface
                     $order = $searchResult->getFirstItem();
 
                     //Cancel order if testmode is disabled and this is a test payment
-                    $testMode = $this->_pensoPayHelper->getIsTestmode();
+                    $testMode = $this->_pensoPayHelper->getIsTestmode($order->getStoreId());
 
                     if (!$testMode && isset($response->resource->testmode) && $response->resource->testmode === true) {
                         $this->_logger->debug('Order attempted paid with a test card but testmode is disabled.');
