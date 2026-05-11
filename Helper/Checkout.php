@@ -5,6 +5,8 @@ namespace Pensopay\Gateway\Helper;
 use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
+use Magento\Framework\Module\Dir;
+use Magento\Framework\Module\Dir\Reader as ModuleDirReader;
 use Magento\Payment\Helper\Data as PaymentHelper;
 use Magento\Payment\Model\Config;
 use Magento\Sales\Model\Order;
@@ -24,19 +26,15 @@ class Checkout extends AbstractHelper
     protected CheckoutSession $_checkoutSession;
     protected PaymentHelper $_paymentHelper;
     protected Config $_paymentConfig;
+    protected ModuleDirReader $_moduleDirReader;
+    protected ?string $_logoBasePath = null;
 
-    /**
-     * Checkout constructor.
-     * @param Context $context
-     * @param CheckoutSession $session
-     * @param PaymentHelper $paymentHelper
-     * @param Config $paymentConfig
-     */
     public function __construct(
         Context         $context,
         CheckoutSession $session,
         PaymentHelper   $paymentHelper,
-        Config          $paymentConfig
+        Config          $paymentConfig,
+        ModuleDirReader $moduleDirReader
     )
     {
         parent::__construct($context);
@@ -44,6 +42,7 @@ class Checkout extends AbstractHelper
         $this->_checkoutSession = $session;
         $this->_paymentHelper = $paymentHelper;
         $this->_paymentConfig = $paymentConfig;
+        $this->_moduleDirReader = $moduleDirReader;
     }
 
     /**
@@ -82,6 +81,17 @@ class Checkout extends AbstractHelper
     public function getLogoSize(): string
     {
         return $this->scopeConfig->getValue(self::XML_PATH_CHECKOUT_CARDLOGOS_SIZE, ScopeInterface::SCOPE_STORE) ?? '';
+    }
+
+    public function getLogoExtension(string $suffix): string
+    {
+        if ($this->_logoBasePath === null) {
+            $this->_logoBasePath = $this->_moduleDirReader->getModuleDir(
+                Dir::MODULE_VIEW_DIR,
+                'Pensopay_Gateway'
+            ) . '/base/web/images/pensopaypayment/';
+        }
+        return file_exists($this->_logoBasePath . $suffix . '.svg') ? 'svg' : 'png';
     }
 
     public function getSecondaryPaymentLogos(): array

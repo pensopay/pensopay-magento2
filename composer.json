@@ -14,7 +14,7 @@
     "require": {
         "php": ">=8.1",
         "ext-json": "*",
-        "pensopay/pensopay-php": "*",
+        "pensopay/pensopay-php": "^2.0.2",
         "hisorange/browser-detect": "^5.0"
     },
     "type": "magento2-module",

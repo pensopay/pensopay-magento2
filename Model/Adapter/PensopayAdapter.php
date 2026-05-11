@@ -15,6 +15,7 @@ use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\Store;
 use Magento\Store\Model\StoreManagerInterface;
+use Pensopay\Client\Api\MethodsApi;
 use Pensopay\Client\Api\PaymentsApi;
 use Pensopay\Client\Configuration;
 use Pensopay\Client\Model\PaymentCapturePaymentRequest;
@@ -27,9 +28,21 @@ use Pensopay\Gateway\Model\PaymentFactory;
 use Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\PaypalConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeBancontactConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeBillieConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeBlikConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeKakaoPayConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeMbwayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeNaverPayConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripePaycoConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripePrzelewy24ConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeSepaConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeTwintConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
 use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
@@ -214,7 +227,10 @@ class PensopayAdapter
                     $paymentData['methods'][] = 'googlepay';
                     break;
                 case SwishConfigProvider::CODE:
-                    $paymentData['methods'][] = 'swish';
+                    $accountMethods = $this->_pensoHelper->getAccountMethodsCache($order->getStoreId());
+                    $paymentData['methods'][] = (is_array($accountMethods) && in_array('stripe_swish', $accountMethods, true))
+                        ? 'stripe_swish'
+                        : 'swish';
                     break;
                 case VippsPspConfigProvider::CODE:
                     $paymentData['methods'][] = 'vippspsp';
@@ -224,6 +240,42 @@ class PensopayAdapter
                     break;
                 case StripeIdealConfigProvider::CODE:
                     $paymentData['methods'][] = 'stripe_ideal';
+                    break;
+                case PaypalConfigProvider::CODE:
+                    $paymentData['methods'][] = 'paypal';
+                    break;
+                case KlarnaConfigProvider::CODE:
+                    $paymentData['methods'][] = 'klarna';
+                    break;
+                case StripePaycoConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_payco';
+                    break;
+                case StripeKakaoPayConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_kakaopay';
+                    break;
+                case StripeNaverPayConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_naverpay';
+                    break;
+                case StripeBillieConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_billie';
+                    break;
+                case StripeTwintConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_twint';
+                    break;
+                case StripeBancontactConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_bancontact';
+                    break;
+                case StripePrzelewy24ConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_przelewy24';
+                    break;
+                case StripeBlikConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_blik';
+                    break;
+                case StripeSepaConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_sepa';
+                    break;
+                case StripeMbwayConfigProvider::CODE:
+                    $paymentData['methods'][] = 'stripe_mbway';
                     break;
                 default: //Covers default payment method - pensopay
                     $paymentMethods = $this->_pensoHelper->getPaymentMethods();
@@ -405,6 +457,25 @@ class PensopayAdapter
     public function setTransactionStore($storeId)
     {
         $this->_client = new PaymentsApi(new Client(), $this->getClientConfiguration($storeId));
+    }
+
+    /**
+     * Fetch the list of payment methods enabled on the merchant's Pensopay
+     * account. Returns null on failure (caller should treat that as "unknown"
+     * and fall back to fail-open behaviour); returns [] when the account has
+     * no methods enabled.
+     */
+    public function fetchAccountMethods(?int $storeId = null): ?array
+    {
+        try {
+            $client = new MethodsApi(new Client(), $this->getClientConfiguration($storeId));
+            $response = $client->getMethods();
+            $methods = $response->getMethods();
+            return is_array($methods) ? $methods : [];
+        } catch (Exception $e) {
+            $this->logger->critical('Failed to fetch Pensopay account methods: ' . $e->getMessage());
+            return null;
+        }
     }
 
     /**

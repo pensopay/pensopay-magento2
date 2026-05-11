@@ -7,16 +7,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment\State\CommandInterface as BaseCommandInterface;
-use Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
+use Pensopay\Gateway\Helper\Data;
 
 class CommandInterface
 {
@@ -37,18 +28,7 @@ class CommandInterface
     {
         $result = $proceed($payment, $amount, $order);
 
-        if (in_array($payment->getMethod(), [
-            PensopayConfigProvider::CODE,
-            ViabillConfigProvider::CODE,
-            AnydayConfigProvider::CODE,
-            ApplePayConfigProvider::CODE,
-            GooglePayConfigProvider::CODE,
-            MobilePayConfigProvider::CODE,
-            SwishConfigProvider::CODE,
-            StripeKlarnaConfigProvider::CODE,
-            StripeIdealConfigProvider::CODE,
-            VippsPspConfigProvider::CODE
-        ], false)) {
+        if (in_array($payment->getMethod(), Data::PENSOPAY_METHOD_CODES, false)) {
             $orderStatus = Order::STATE_NEW;
             if ($orderStatus && $order->getState() === Order::STATE_PROCESSING) {
                 $order->setState($orderStatus)

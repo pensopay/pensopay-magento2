@@ -12,7 +12,8 @@ $checkoutHelper = $this->helper(Checkout::class);
 </div>
 
 <?php foreach ($checkoutHelper->getSecondaryPaymentLogos() as $logo => $size): ?>
+    <?php $ext = $checkoutHelper->getLogoExtension($logo); ?>
     <div class="checkout-<?= $logo ?>-logos" style="display: none;">
-        <?= sprintf('<img src="%s" style="max-height: %spx;vertical-align:middle" />', $this->getViewFileUrl("Pensopay_Gateway::images/pensopaypayment/{$logo}.png"), $size) ?>
+        <?= sprintf('<img src="%s" style="max-height: %spx;vertical-align:middle" />', $this->getViewFileUrl("Pensopay_Gateway::images/pensopaypayment/{$logo}.{$ext}"), $size) ?>
     </div>
 <?php endforeach; ?>

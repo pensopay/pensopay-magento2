@@ -71,6 +71,61 @@
                                                                                   xsi:type="boolean">true
                                                                             </item>
                                                                         </item>
+                                                                        <item name="pensopay_gateway_klarna" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripepayco" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripekakaopay" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripenaverpay" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripebillie" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripetwint" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripebancontact" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripeprzelewy24" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripeblik" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripesepa" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
+                                                                        <item name="pensopay_gateway_stripembway" xsi:type="array">
+                                                                            <item name="isBillingAddressRequired"
+                                                                                  xsi:type="boolean">true
+                                                                            </item>
+                                                                        </item>
                                                                     </item>
                                                                 </item>
                                                             </item>

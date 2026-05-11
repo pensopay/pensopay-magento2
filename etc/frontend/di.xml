@@ -34,6 +34,42 @@
                 <item name="pensopay_gateway_vippspsp_config_provider" xsi:type="object">
                     Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider
                 </item>
+                <item name="pensopay_gateway_paypal_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\PaypalConfigProvider
+                </item>
+                <item name="pensopay_gateway_klarna_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\KlarnaConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripepayco_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripePaycoConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripekakaopay_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripeKakaoPayConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripenaverpay_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripeNaverPayConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripebillie_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripeBillieConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripetwint_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripeTwintConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripebancontact_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripeBancontactConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripeprzelewy24_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripePrzelewy24ConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripeblik_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripeBlikConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripesepa_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripeSepaConfigProvider
+                </item>
+                <item name="pensopay_gateway_stripembway_config_provider" xsi:type="object">
+                    Pensopay\Gateway\Model\Ui\Method\StripeMbwayConfigProvider
+                </item>
             </argument>
         </arguments>
     </type>

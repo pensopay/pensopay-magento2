@@ -6,16 +6,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Sales\Model\Order;
 use Magento\Sales\Model\Order\Payment;
-use Pensopay\Gateway\Model\Ui\Method\AnydayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\ApplePayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\MobilePayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\PensopayConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\SwishConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\ViabillConfigProvider;
-use Pensopay\Gateway\Model\Ui\Method\VippsPspConfigProvider;
+use Pensopay\Gateway\Helper\Data;
 
 class SalesOrderPaymentPlaceStart implements ObserverInterface
 {
@@ -30,18 +21,7 @@ class SalesOrderPaymentPlaceStart implements ObserverInterface
         /** @var Payment $payment */
         $payment = $observer->getPayment();
 
-        if (in_array($payment->getMethod(), [
-            PensopayConfigProvider::CODE,
-            ViabillConfigProvider::CODE,
-            AnydayConfigProvider::CODE,
-            ApplePayConfigProvider::CODE,
-            GooglePayConfigProvider::CODE,
-            MobilePayConfigProvider::CODE,
-            SwishConfigProvider::CODE,
-            StripeKlarnaConfigProvider::CODE,
-            StripeIdealConfigProvider::CODE,
-            VippsPspConfigProvider::CODE,
-        ], false)) {
+        if (in_array($payment->getMethod(), Data::PENSOPAY_METHOD_CODES, false)) {
             /** @var Order $order */
             $order = $payment->getOrder();
             $order->setCanSendNewEmailFlag(false)

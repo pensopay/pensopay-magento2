@@ -5,12 +5,21 @@ namespace Pensopay\Gateway\Observer;
 use hisorange\BrowserDetect\Parser as Browser;
 use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
+use Pensopay\Gateway\Helper\Data as PensopayHelperData;
+use Pensopay\Gateway\Model\Ui\Method\StripeIdealConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\StripeKlarnaConfigProvider;
+use Pensopay\Gateway\Model\Ui\Method\GooglePayConfigProvider;
 
 /**
  * This class is necessary because there's no apparent way to do this through the validator pool
  */
 class IsMethodAvailable implements ObserverInterface
 {
+    public function __construct(
+        private PensopayHelperData $pensoHelper
+    ) {
+    }
+
     /**
      * @param Observer $observer
      */
@@ -20,27 +29,48 @@ class IsMethodAvailable implements ObserverInterface
         $methodInstance = $observer->getEvent()->getMethodInstance();
         /** @var \Magento\Quote\Api\Data\CartInterface $quote */
         $quote = $observer->getEvent()->getQuote();
+        $code = $methodInstance->getCode();
 
-        switch ($methodInstance->getCode()) {
-            case 'pensopay_gateway_stripeideal':
+        // Per-method special gates (currency whitelists, browser sniffs, etc.)
+        switch ($code) {
+            case StripeIdealConfigProvider::CODE:
                 if ($quote->getCurrency()->getQuoteCurrencyCode() !== 'EUR') {
                     $result->setData('is_available', false);
+                    return;
                 }
                 break;
-            case 'pensopay_gateway_stripeklarna':
+            case StripeKlarnaConfigProvider::CODE:
                 if (!in_array($quote->getCurrency()->getQuoteCurrencyCode(),
                     ['AUD', 'CAD', 'CHF', 'CZK', 'DKK', 'EUR', 'GBP', 'NOK', 'NZD', 'PLN', 'RON', 'SEK', 'USD'],
-              true
+                    true
                 )) {
                     $result->setData('is_available', false);
+                    return;
                 }
                 break;
-            case 'pensopay_gateway_googlepay':
+            case GooglePayConfigProvider::CODE:
                 if (!Browser::isChrome()) {
                     $result->setData('is_available', false);
+                    return;
                 }
-            default:
                 break;
+        }
+
+        if (isset(PensopayHelperData::ACCOUNT_METHOD_API_IDS[$code])) {
+            $cache = $this->pensoHelper->getAccountMethodsCache($quote->getStoreId());
+            if (is_array($cache)) {
+                $apiIds = PensopayHelperData::ACCOUNT_METHOD_API_IDS[$code];
+                $found = false;
+                foreach ($apiIds as $apiId) {
+                    if (in_array($apiId, $cache, true)) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $result->setData('is_available', false);
+                }
+            }
         }
     }
 }
