@@ -71,3 +71,5 @@
 "pensopay Klarna (Native)","pensopay Klarna (nativ)"
 "Cancel order automatically after 24h of non-payment pass.","Avbryt ordern automatiskt om den inte betalats inom 24 timmar."
 "The max pixel height (without the px)","Maxhöjd i pixlar (utan px)"
+"%1 orders invoiced, captured and invoice email sent","%1 ordrar fakturerade, dragna och fakturamail skickat"
+"Order %1 was captured but the invoice email could not be sent: %2","Order %1 drogs men fakturamailen kunde inte skickas: %2"
