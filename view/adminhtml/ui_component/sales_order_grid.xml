@@ -20,6 +20,21 @@
                     </item>
                 </argument>
             </action>
+            <action name="order_pensopay_capture_send_invoice">
+                <argument name="data" xsi:type="array">
+                    <item name="config" xsi:type="array">
+                        <item name="type" xsi:type="string">order_pensopay_capture_send_invoice</item>
+                        <item name="label" xsi:type="string" translate="true">Capture and send invoice with pensopay</item>
+                        <item name="url" xsi:type="url" path="pensopaygw/auxiliary/masscaptureSendInvoice"/>
+                        <item name="confirm" xsi:type="array">
+                            <item name="title" xsi:type="string" translate="true">Capture and send invoice with pensopay</item>
+                            <item name="message" xsi:type="string" translate="true">Are you sure you want to capture the
+                                selected order(s) and send the invoice email?
+                            </item>
+                        </item>
+                    </item>
+                </argument>
+            </action>
         </massaction>
     </listingToolbar>
 </listing>

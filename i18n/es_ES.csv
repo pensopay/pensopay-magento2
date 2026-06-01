@@ -71,3 +71,5 @@
 "pensopay Klarna (Native)","pensopay Klarna (nativo)"
 "Cancel order automatically after 24h of non-payment pass.","Cancelar el pedido automáticamente si pasan 24 h sin pago."
 "The max pixel height (without the px)","Altura máxima en píxeles (sin la unidad px)"
+"%1 orders invoiced, captured and invoice email sent","%1 pedidos facturados, capturados y correo de factura enviado"
+"Order %1 was captured but the invoice email could not be sent: %2","El pedido %1 se capturó pero no se pudo enviar el correo de la factura: %2"
