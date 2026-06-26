@@ -211,7 +211,10 @@ class Callback implements ActionInterface
                     if ($response->event === 'payment.authorized' && !$isAutocapture) {
                         $this->_setOrderStatusAndSave($order);
                     } else if ($response->event === 'payment.captured' && $isAutocapture) {
-                        if ($order->canInvoice()) {
+                        if ($this->_isAlreadyInvoiced($order, $response->resource->id)) {
+                            //Idempotency guard: a retried/duplicate capture callback must not create a second invoice
+                            $this->_logger->debug('Capture callback already invoiced, skipping: ' . $order->getIncrementId());
+                        } else if ($order->canInvoice()) {
                             /** @var Invoice $invoice */
                             $invoice = $order->prepareInvoice();
 
@@ -250,6 +253,24 @@ class Callback implements ActionInterface
         }
 
         return $this->_resultRaw;
+    }
+
+    /**
+     * Whether the order already has an invoice carrying the given Pensopay transaction id.
+     * Guards against duplicate invoices on retried/duplicate capture callbacks.
+     *
+     * @param Order $order
+     * @param string $transactionId
+     * @return bool
+     */
+    protected function _isAlreadyInvoiced($order, $transactionId): bool
+    {
+        foreach ($order->getInvoiceCollection() as $invoice) {
+            if ((string)$invoice->getTransactionId() === (string)$transactionId) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected function _setOrderStatusAndSave($order)
