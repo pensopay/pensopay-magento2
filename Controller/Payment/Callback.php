@@ -9,6 +9,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Lock\LockManagerInterface;
 use Magento\Quote\Model\QuoteRepository;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order;
@@ -48,6 +49,8 @@ class Callback implements ActionInterface
 
     protected QuoteRepository $_quoteRepository;
 
+    protected LockManagerInterface $_lockManager;
+
     public function __construct(
         LoggerInterface       $logger,
         ScopeConfigInterface  $scopeConfig,
@@ -59,7 +62,8 @@ class Callback implements ActionInterface
         SearchCriteriaBuilder $searchCriteriaBuilder,
         RequestInterface      $request,
         Raw                   $resultRaw,
-        QuoteRepository       $quoteRepository
+        QuoteRepository       $quoteRepository,
+        LockManagerInterface  $lockManager
     )
     {
         $this->_scopeConfig = $scopeConfig;
@@ -73,7 +77,14 @@ class Callback implements ActionInterface
         $this->_request = $request;
         $this->_resultRaw = $resultRaw;
         $this->_quoteRepository = $quoteRepository;
+        $this->_lockManager = $lockManager;
     }
+
+    /**
+     * How long (seconds) a callback waits to acquire the per-order lock before
+     * giving up and asking Pensopay to retry.
+     */
+    private const LOCK_TIMEOUT = 10;
 
     /**
      * @return Session
@@ -101,6 +112,20 @@ class Callback implements ActionInterface
 
                 //Make sure that payment is accepted - right now we're ignoring other events
                 if ($response->type === 'payment') {
+                    /**
+                     * Serialize all callbacks for the same order. Pensopay fires
+                     * payment.authorized and payment.captured almost simultaneously for
+                     * autocaptured payments (e.g. Swish); without this lock two PHP-FPM
+                     * workers can process them concurrently and race on invoice creation.
+                     */
+                    $lockName = 'pensopay_cb_' . sha1((string)$response->resource->order_id);
+                    if (!$this->_lockManager->lock($lockName, self::LOCK_TIMEOUT)) {
+                        $this->_logger->debug('Could not acquire callback lock for order: ' . $response->resource->order_id);
+                        //Ask Pensopay to retry rather than risk processing concurrently
+                        return $this->_resultRaw->setHttpResponseCode(503);
+                    }
+
+                    try {
                     $searchCriteria = $this->_searchCriteriaBuilder->addFilter('increment_id', $response->resource->order_id)->create();
                     $searchResult = $this->_orderRepository->getList($searchCriteria);
 
@@ -212,8 +237,9 @@ class Callback implements ActionInterface
                     $pensoPayment->load($order->getIncrementId(), 'order_id');
                     $pensoPayment->importFromRemotePayment(json_decode($body, true));
                     $pensoPayment->save();
-
-
+                    } finally {
+                        $this->_lockManager->unlock($lockName);
+                    }
                 }
             } else {
                 $this->_logger->debug('Checksum mismatch');
