@@ -10,6 +10,7 @@ use Magento\Sales\Model\Order;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\RedirectFactory;
+use Magento\Sales\Api\OrderRepositoryInterface;
 
 class ReturnAction implements ActionInterface
 {
@@ -23,12 +24,15 @@ class ReturnAction implements ActionInterface
 
     protected SearchCriteriaBuilder $_searchCriteriaBuilder;
 
+    protected OrderRepositoryInterface $_orderRepository;
+
     public function __construct(
         Session            $session,
         EncryptorInterface $encryptor,
         RequestInterface   $request,
         RedirectFactory    $resultRedirectFactory,
-        SearchCriteriaBuilder $searchCriteriaBuilder
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        OrderRepositoryInterface $orderRepository
     )
     {
         $this->_session = $session;
@@ -36,6 +40,7 @@ class ReturnAction implements ActionInterface
         $this->_request = $request;
         $this->_resultRedirectFactory = $resultRedirectFactory;
         $this->_searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->_orderRepository = $orderRepository;
     }
 
     /**
