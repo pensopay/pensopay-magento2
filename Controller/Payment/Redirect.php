@@ -3,15 +3,13 @@
 namespace Pensopay\Gateway\Controller\Payment;
 
 use Exception;
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
-use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\App\ActionInterface;
+use Magento\Framework\Controller\Result\Redirect as RedirectResult;
+use Magento\Framework\Controller\Result\RedirectFactory;
+use Magento\Framework\Message\ManagerInterface;
 use Pensopay\Gateway\Helper\Checkout as PensopayCheckoutHelper;
 use Pensopay\Gateway\V2\Response\PaymentLinkHandler;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\App\ActionInterface;
-use Magento\Framework\App\RequestInterface;
-use Magento\Framework\Controller\Result\RedirectFactory;
 
 class Redirect implements ActionInterface
 {
@@ -19,31 +17,33 @@ class Redirect implements ActionInterface
 
     protected PensopayCheckoutHelper $_pensopayCheckoutHelper;
 
-    protected StoreManagerInterface $_storeManager;
-
     protected RedirectFactory $_resultRedirectFactory;
 
+    protected ManagerInterface $_messageManager;
+
     /**
-     * Class constructor
-     * @param Context $context
      * @param LoggerInterface $logger
      * @param PensopayCheckoutHelper $pensopayCheckoutHelper
+     * @param RedirectFactory $resultRedirectFactory
+     * @param ManagerInterface $messageManager
      */
     public function __construct(
         LoggerInterface        $logger,
         PensopayCheckoutHelper $pensopayCheckoutHelper,
-        RedirectFactory        $resultRedirectFactory
+        RedirectFactory        $resultRedirectFactory,
+        ManagerInterface       $messageManager
     )
     {
         $this->_logger = $logger;
         $this->_pensopayCheckoutHelper = $pensopayCheckoutHelper;
         $this->_resultRedirectFactory = $resultRedirectFactory;
+        $this->_messageManager = $messageManager;
     }
 
     /**
-     * Redirect to to pensopay
+     * Redirect to pensopay
      *
-     * @return string
+     * @return RedirectResult
      */
     public function execute()
     {
@@ -51,9 +51,9 @@ class Redirect implements ActionInterface
             $order = $this->_pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
             $paymentLink = $order->getPayment()->getAdditionalInformation(PaymentLinkHandler::PAYMENT_LINK);
 
-            return $this->_resultRedirectFactory->create()->setPath($paymentLink);
+            return $this->_resultRedirectFactory->create()->setUrl($paymentLink);
         } catch (Exception $e) {
-            $this->messageManager->addException($e, __('Something went wrong, please try again later'));
+            $this->_messageManager->addExceptionMessage($e, __('Something went wrong, please try again later'));
             $this->_logger->critical($e);
             $this->_pensopayCheckoutHelper->getCheckoutSession()->restoreQuote();
             return $this->_resultRedirectFactory->create()->setPath('checkout/cart');
