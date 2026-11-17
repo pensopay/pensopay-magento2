@@ -6,6 +6,7 @@ use Exception;
 use Magento\Framework\App\ActionInterface;
 use Magento\Framework\Controller\Result\Redirect as RedirectResult;
 use Magento\Framework\Controller\Result\RedirectFactory;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Message\ManagerInterface;
 use Pensopay\Gateway\Helper\Checkout as PensopayCheckoutHelper;
 use Pensopay\Gateway\V2\Response\PaymentLinkHandler;
@@ -50,6 +51,10 @@ class Redirect implements ActionInterface
         try {
             $order = $this->_pensopayCheckoutHelper->getCheckoutSession()->getLastRealOrder();
             $paymentLink = $order->getPayment()->getAdditionalInformation(PaymentLinkHandler::PAYMENT_LINK);
+
+            if (empty($paymentLink)) {
+                throw new LocalizedException(__('Missing pensopay payment link for order %1', $order->getIncrementId()));
+            }
 
             return $this->_resultRedirectFactory->create()->setUrl($paymentLink);
         } catch (Exception $e) {
