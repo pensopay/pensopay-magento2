@@ -1,0 +1,79 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Magento ${{ matrix.magento }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { magento: '2.4.6', php: '8.1', framework: '103.0.6', checkout: '100.4.6', sales: '103.0.6', phpunit: '^9.5' }
+          - { magento: '2.4.7', php: '8.3', framework: '103.0.7', checkout: '100.4.7', sales: '103.0.7', phpunit: '^9.6' }
+          - { magento: '2.4.8', php: '8.4', framework: '103.0.8', checkout: '100.4.8', sales: '103.0.8', phpunit: '^10.5' }
+          - { magento: '2.4.9', php: '8.5', framework: '103.0.9', checkout: '100.4.9', sales: '103.0.9', phpunit: '^10.5' }
+
+    env:
+      HARNESS_DIR: ${{ github.workspace }}/../harness
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: bcmath, gd, intl, soap, sodium, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Lint PHP files
+        run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 -P4 php -l > /dev/null
+
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer
+          key: composer-${{ matrix.magento }}-${{ matrix.php }}
+
+      # The module repo has no Magento framework of its own, so build a minimal harness that pulls
+      # the Magento packages from the public Mage-OS mirror (no repo.magento.com credentials needed)
+      # and autoloads this module from the checkout.
+      - name: Build test harness
+        env:
+          MODULE_DIR: ${{ github.workspace }}
+        run: |
+          mkdir -p "$HARNESS_DIR"
+          cd "$HARNESS_DIR"
+          cat > composer.json <<EOF
+          {
+            "name": "pensopay/gateway-test-harness",
+            "version": "1.0.0",
+            "repositories": [{"type": "composer", "url": "https://mirror.mage-os.org/", "only": ["magento/*"]}],
+            "config": {"allow-plugins": false, "audit": {"block-insecure": false}},
+            "autoload": {"psr-4": {"Pensopay\\\\Gateway\\\\": "$MODULE_DIR/"}}
+          }
+          EOF
+          composer require --no-interaction --no-progress --no-plugins --no-scripts \
+            --ignore-platform-req='ext-*' --with-all-dependencies \
+            "magento/framework:${{ matrix.framework }}.*" \
+            "magento/module-checkout:${{ matrix.checkout }}.*" \
+            "magento/module-sales:${{ matrix.sales }}.*" \
+            "phpunit/phpunit:${{ matrix.phpunit }}"
+
+      - name: Run unit tests
+        run: |
+          cd "$HARNESS_DIR"
+          vendor/bin/phpunit --bootstrap vendor/autoload.php --colors=always "${{ github.workspace }}/Test/Unit"

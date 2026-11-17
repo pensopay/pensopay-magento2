@@ -9,6 +9,10 @@
         {
             "name": "Dimitris Preketes",
             "email": "d.preketes@codecave.eu"
+        },
+        {
+            "name": "Alexander Colmorn",
+            "email": "alexander.colmorn@visma.com"
         }
     ],
     "require": {
