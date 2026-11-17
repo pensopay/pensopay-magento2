@@ -2,11 +2,10 @@
 
 namespace Pensopay\Gateway\Controller\Payment;
 
-use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\Action\Context;
-use Pensopay\Gateway\Helper\Checkout;
 use Magento\Framework\App\ActionInterface;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
+use Pensopay\Gateway\Helper\Checkout;
 
 class CancelAction implements ActionInterface
 {
@@ -15,12 +14,12 @@ class CancelAction implements ActionInterface
     protected RedirectFactory $_resultRedirectFactory;
 
     /**
-     * @param Context $context
      * @param Checkout $checkoutHelper
+     * @param RedirectFactory $resultRedirectFactory
      */
     public function __construct(
-        Checkout                      $checkoutHelper,
-        RedirectFactory               $resultRedirectFactory
+        Checkout        $checkoutHelper,
+        RedirectFactory $resultRedirectFactory
     )
     {
         $this->_checkoutHelper = $checkoutHelper;
@@ -30,7 +29,7 @@ class CancelAction implements ActionInterface
     /**
      * Customer canceled payment on gateway side.
      *
-     * @return void
+     * @return Redirect
      */
     public function execute()
     {

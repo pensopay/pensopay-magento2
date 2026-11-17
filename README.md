@@ -26,3 +26,10 @@ php bin/magento setup:di:compile
 ``` 
 
 **Please note that FTP installation will not work as this module has requirements that will be auto installed when using composer**
+
+### Running unit tests
+Unit tests live in `Test/Unit` and run with Magento's PHPUnit setup from the root of a Magento install:
+```
+vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist vendor/pensopay/magento2-gateway/Test/Unit
+```
+(Use `app/code/Pensopay/Gateway/Test/Unit` instead if the module is installed under `app/code`.)
